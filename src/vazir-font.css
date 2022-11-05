@@ -1,0 +1,56 @@
+@font-face {
+  font-family: "Vazir";
+  src: url("/src/fonts/vazir/Vazirmatn-Medium.eot");
+  src: url("/src/fonts/vazir/Vazirmatn-Medium.eot?#iefix")
+      format("embedded-opentype"),
+    url("/src/fonts/vazir/Vazirmatn-Medium.woff2") format("woff2"),
+    url("/src/fonts/vazir/Vazirmatn-Medium.woff") format("woff"),
+    url("/src/fonts/vazir/Vazirmatn-Medium.ttf") format("truetype"),
+    url("/src/fonts/vazir/Vazirmatn-Medium.svg#Vazirmatn-Medium") format("svg");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazir";
+  src: url("/src/fonts/vazir/Vazirmatn-Light.eot");
+  src: url("/src/fonts/vazir/Vazirmatn-Light.eot?#iefix")
+      format("embedded-opentype"),
+    url("/src/fonts/vazir/Vazirmatn-Light.woff2") format("woff2"),
+    url("/src/fonts/vazir/Vazirmatn-Light.woff") format("woff"),
+    url("/src/fonts/vazir/Vazirmatn-Light.ttf") format("truetype"),
+    url("/src/fonts/vazir/Vazirmatn-Light.svg#Vazirmatn-Light") format("svg");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazir";
+  src: url("/src/fonts/vazir/Vazirmatn-Regular.eot");
+  src: url("/src/fonts/vazir/Vazirmatn-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("/src/fonts/vazir/Vazirmatn-Regular.woff2") format("woff2"),
+    url("/src/fonts/vazir/Vazirmatn-Regular.woff") format("woff"),
+    url("/src/fonts/vazir/Vazirmatn-Regular.ttf") format("truetype"),
+    url("/src/fonts/vazir/Vazirmatn-Regular.svg#Vazirmatn-Regular")
+      format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazir";
+  src: url("/src/fonts/vazir/Vazirmatn-Bold.eot");
+  src: url("/src/fonts/vazir/Vazirmatn-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    url("/src/fonts/vazir/Vazirmatn-Bold.woff2") format("woff2"),
+    url("/src/fonts/vazir/Vazirmatn-Bold.woff") format("woff"),
+    url("/src/fonts/vazir/Vazirmatn-Bold.ttf") format("truetype"),
+    url("/src/fonts/vazir/Vazirmatn-Bold.svg#Vazirmatn-Bold") format("svg");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
