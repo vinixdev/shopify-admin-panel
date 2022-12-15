@@ -1,6 +1,7 @@
 import React from "react";
 import { Snackbar } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { t } from "i18next";
 
 const BaseAlert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -19,7 +20,7 @@ interface AlertPropsInterface {
 
 export default function Alert({
   open,
-  message = "خطایی رخ داده است.",
+  message = String(t("default_error")),
   type,
   duration = 3000,
   handleClose,

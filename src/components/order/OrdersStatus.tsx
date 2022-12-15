@@ -1,8 +1,11 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import OrderStatusBarContainer from "./OrdersStatusBarContainer";
+import { useTranslation } from "react-i18next";
 
 export default function OrdersStatus() {
+  const { t } = useTranslation();
+
   return (
     <Box
       display={"block"}
@@ -32,7 +35,7 @@ export default function OrdersStatus() {
           },
         ]}
       >
-        وضعیت سفارش ها
+        {t("orders_status")}
       </Typography>
       <OrderStatusBarContainer />
     </Box>

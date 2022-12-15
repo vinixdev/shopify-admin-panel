@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, FormControl } from "@mui/material";
 import axios from "axios";
 
 import PaperBox from "../partials/PaperBox";
@@ -14,8 +14,11 @@ import ModalForm from "./modal/ModalForm";
 import HttpRequest from "../../services/HttpRequest";
 import { alertInitialState, alertReducer } from "../alert/reducer/alertReducer";
 import Alert from "../alert/Alert";
+import { useTranslation } from "react-i18next";
 
 export default function AddNewCategory() {
+  const { t } = useTranslation();
+
   const { state, dispatch } =
     React.useContext<CategoryContextInterface>(CategoryContext);
 
@@ -28,11 +31,15 @@ export default function AddNewCategory() {
 
   const [title, setTitle] = React.useState<string>("");
 
+  const [slug, setSlug] = React.useState<string>("");
+
   const [categoryTitle, setCategoryTitle] = React.useState<string>("");
 
   const [categorySlug, setCategorySlug] = React.useState<string>("");
 
-  const [slug, setSlug] = React.useState<string>("");
+  const [formErrors, setFormErrors] = React.useState<Map<string, string>>(
+    new Map<string, string>()
+  );
 
   const attrGroups = state.groups.length ? (
     state.groups.map((group, i) => {
@@ -41,79 +48,188 @@ export default function AddNewCategory() {
       );
     })
   ) : (
-    <Box>گروه جدیدی اضافه کنید</Box>
+    <Box>{t("empty_group")}</Box>
   );
 
-  function handleCategoryTitleBlur(
-    e: React.FocusEvent<HTMLInputElement>
-  ): void {
-    e.preventDefault();
-    setCategoryTitle(e.currentTarget.value);
-    dispatch({
-      type: "ADD_NEW_CATEGORY_TITLE",
-      payload: {
-        title: e.currentTarget.value,
-      },
-    });
+  function handleCategoryTitle(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.value) {
+      formErrors.delete("category_title");
+      setFormErrors(formErrors);
+      setCategoryTitle(e.target.value);
+    } else {
+      formErrors.set("category_title", "empty");
+      setFormErrors(formErrors);
+      setCategoryTitle("");
+    }
   }
 
-  function handleCategorySlug(e: React.FocusEvent<HTMLInputElement>) {
+  function handleCategoryTitleBlur(e: React.FocusEvent<HTMLInputElement>) {
+    if (e.target.value) {
+      dispatch({
+        type: "ADD_NEW_CATEGORY_TITLE",
+        payload: {
+          title: categoryTitle,
+        },
+      });
+    }
+  }
+
+  function handleCategorySlug(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    setCategorySlug(e.currentTarget.value);
-    dispatch({
-      type: "ADD_NEW_CATEGORY_SLUG",
-      payload: {
-        slug: e.currentTarget.value,
-      },
-    });
+    if (e.target.value) {
+      formErrors.delete("category_slug");
+      setFormErrors(formErrors);
+      setCategorySlug(e.target.value);
+    } else {
+      setFormErrors(formErrors.set("category_slug", "empty"));
+      setCategorySlug("");
+    }
+  }
+
+  function handleCategorySlugBlur(e: React.FocusEvent<HTMLInputElement>) {
+    if (e.target.value) {
+      dispatch({
+        type: "ADD_NEW_CATEGORY_SLUG",
+        payload: {
+          slug: categorySlug,
+        },
+      });
+    }
   }
 
   function handleSaveBtn(e: React.MouseEvent) {
     e.preventDefault();
-    if (!categoryTitle || !categorySlug) {
+    if (!categoryTitle && !categorySlug) {
+      setFormErrors(formErrors.set("category_title", "empty"));
+      setFormErrors(formErrors.set("category_slug", "empty"));
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("fill_fields_error"),
+      });
       return;
     }
+
+    let empty_attr = false;
+    let empty_attributes = false;
+
+    state.groups.forEach((group) => {
+      group.attributes.forEach((attr) => {
+        if (!attr.title || !attr.slug) {
+          empty_attr = true;
+          return;
+        }
+      });
+    });
+
+    state.groups.forEach((group) => {
+      if (group.attributes.length === 0) {
+        empty_attributes = true;
+        return;
+      }
+    });
+
+    if (state.groups.length === 0) {
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("one_group_error"),
+      });
+      return;
+    }
+
+    if (empty_attr) {
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("fill_filed_attr_error"),
+      });
+      return;
+    }
+
+    if (empty_attributes) {
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("one_group_attr_error"),
+      });
+      return;
+    }
+
     const httpRequest = new HttpRequest();
     httpRequest
       .post("api/v1/categories", state, {})
       .then((res) => {
         // show notification with component and clear fields
+        dispatch({
+          type: "RESET_STATE",
+          payload: null,
+        });
         alertDispatch({
           type: "ALERT_SUCCESS",
-          payload: "عملیات با موفقیت انجام شد.",
+          payload: t("success_msg"),
         });
+        setCategorySlug("");
+        setCategoryTitle("");
+        setTitle("");
+        setSlug("");
       })
       .catch((err: Error) => {
         if (axios.isAxiosError(err)) {
           alertDispatch({
             type: "ALERT_ERROR",
-            payload: "خطایی رخ داده است.",
+            payload: t("default_error"),
           });
           console.log(err.message);
         }
       });
+    console.log(state);
   }
 
   function showModal(e: React.MouseEvent) {
-    setOpen(true);
+    if (categorySlug && categoryTitle) {
+      setOpen(true);
+    } else {
+      setFormErrors(formErrors.set("category_title", "empty"));
+      setFormErrors(formErrors.set("category_slug", "empty"));
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("fill_fields_error"),
+      });
+    }
   }
+
   function closeModal(e: React.MouseEvent) {
     setOpen(false);
   }
 
   function addNewAttrGroup(e: React.MouseEvent) {
     e.preventDefault();
-    dispatch({
-      type: "ADD_NEW_GROUP",
-      payload: {
-        title,
-        slug,
-        attributes: [],
-      },
-    });
-    setOpen(false);
-    setTitle("");
-    setSlug("");
+    if (title && slug) {
+      formErrors.delete("group_title");
+      formErrors.delete("group_slug");
+      setFormErrors(formErrors);
+      dispatch({
+        type: "ADD_NEW_GROUP",
+        payload: {
+          title,
+          slug,
+          attributes: [],
+        },
+      });
+      setOpen(false);
+      setTitle("");
+      setSlug("");
+    } else {
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("fill_fields_error"),
+      });
+      if (!title) {
+        setFormErrors(formErrors.set("group_title", "empty"));
+        setTitle("");
+      }
+      if (!slug) {
+        setFormErrors(formErrors.set("group_slug", "empty"));
+        setSlug("");
+      }
+    }
   }
 
   function handleCloseAlert(e?: React.SyntheticEvent | Event, reason?: string) {
@@ -124,46 +240,71 @@ export default function AddNewCategory() {
   }
 
   return (
-    <PaperBox title="اضافه کردن دسته بندی جدید">
+    <PaperBox title={t("new_category")}>
       <Box
         paddingX={1}
         paddingY={2}
         component={"form"}
         display={"flex"}
+        flexDirection={"column"}
         alignItems={"center"}
         gap={2}
       >
-        <InputField
-          value={categoryTitle}
-          placeholder="عنوان دسته بندی - فارسی"
-          onBlurHandler={handleCategoryTitleBlur}
-        />
-        <InputField
-          value={categorySlug}
-          onBlurHandler={handleCategorySlug}
-          placeholder="اسلاگ دسته بندی - انگلیسی"
-        />
-        <Box flexShrink={"0"}>
-          <AddButton onClickHandler={showModal} text={"اضافه کردن گروه جدید"} />
+        <Box
+          width={"100%"}
+          component={"div"}
+          display={"flex"}
+          alignItems={"center"}
+          gap={2}
+        >
+          <FormControl>
+            <InputField
+              value={categoryTitle}
+              placeholder={t("title")}
+              required
+              error={formErrors.has("category_title")}
+              onChangeHandler={handleCategoryTitle}
+              onBlurHandler={handleCategoryTitleBlur}
+            />
+          </FormControl>
+          <FormControl>
+            <InputField
+              value={categorySlug}
+              required
+              onChangeHandler={handleCategorySlug}
+              onBlurHandler={handleCategorySlugBlur}
+              error={formErrors.has("category_slug")}
+              placeholder={t("slug")}
+            />
+          </FormControl>
+          <Box flexShrink={"0"}>
+            <AddButton onClickHandler={showModal} text={t("add_new_group")} />
+          </Box>
         </Box>
+
+        <>{attrGroups}</>
+        <FormControl sx={{ alignSelf: "flex-end" }}>
+          <Button
+            onClick={handleSaveBtn}
+            type="submit"
+            disabled={formErrors.size > 0}
+            sx={{
+              alignSelf: "flex-end",
+              backgroundColor: "primary.main",
+              color: "textPrimary.main",
+              "&:hover": {
+                backgroundColor: "#4931BE",
+              },
+              marginTop: 0.5,
+            }}
+          >
+            {t("save")}
+          </Button>
+        </FormControl>
       </Box>
-      <>{attrGroups}</>
-      <Button
-        onClick={handleSaveBtn}
-        sx={{
-          alignSelf: "flex-end",
-          backgroundColor: "primary.main",
-          color: "textPrimary.main",
-          "&:hover": {
-            backgroundColor: "#4931BE",
-          },
-          marginTop: 0.5,
-        }}
-      >
-        ذخیره سازی
-      </Button>
+
       <ModalForm
-        title="اضافه کردن گروه جدید"
+        title={t("add_new_group")}
         open={open}
         sx={{ display: "flex", alignItems: "center", gap: 1 }}
         onCloseHandler={closeModal}
@@ -172,19 +313,35 @@ export default function AddNewCategory() {
         <>
           <InputField
             value={title}
-            onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.currentTarget.value)
-            }
-            placeholder="عنوان گروه وارد کنید - فارسی"
+            onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (e.target.value) {
+                formErrors.delete("group_title");
+                setFormErrors(formErrors);
+                setTitle(e.target.value);
+              } else {
+                setTitle("");
+                setFormErrors(formErrors.set("group_title", "empty"));
+              }
+            }}
+            placeholder={t("title")}
             size={20}
+            error={formErrors.has("group_title")}
           />
           <InputField
             value={slug}
-            onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSlug(e.currentTarget.value)
-            }
-            placeholder="اسلاگ گروه وارد کنید - انگلیسی"
+            onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (e.target.value) {
+                formErrors.delete("group_slug");
+                setFormErrors(formErrors);
+                setSlug(e.target.value);
+              } else {
+                setSlug("");
+                setFormErrors(formErrors.set("group_slug", "empty"));
+              }
+            }}
+            placeholder={t("slug")}
             size={20}
+            error={formErrors.has("group_slug")}
           />
         </>
       </ModalForm>

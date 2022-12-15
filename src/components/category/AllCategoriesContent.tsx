@@ -1,113 +1,58 @@
 import React from "react";
-import {
-  IconButton,
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Theme,
-} from "@mui/material";
+import { IconButton, TableCell, TableRow } from "@mui/material";
 import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 
 import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import PaperBox from "../partials/PaperBox";
+
 import HttpRequest from "../../services/HttpRequest";
 import { CategoryStateInterface } from "./context/CategoryReducer";
-import Alert from "../alert/Alert";
+
+import { alertInitialState, alertReducer } from "../alert/reducer/alertReducer";
+import { CategoriesResponseInterface } from "./interfaces/interfaces";
+import DataList from "../partials/DataList";
+import { useTranslation } from "react-i18next";
 
 export default function AllCategoriesContent() {
+  const { t } = useTranslation();
+
   const [categories, setCategories] = React.useState<CategoryStateInterface[]>(
     []
   );
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [alertState, alertDispatch] = React.useReducer(
+    alertReducer,
+    alertInitialState
+  );
 
-  function handleCloseNotify(
-    e?: React.SyntheticEvent | Event,
-    reason?: string
-  ) {
-    setOpen(false);
-  }
+  const [page, setPage] = React.useState<number>(1);
+  const [numOfPages, setNumOfPages] = React.useState<number>(0);
+  const [perPage, setPerPage] = React.useState<number>(5);
 
   React.useEffect(() => {
     const httpRequest = new HttpRequest();
     httpRequest
-      .get<CategoryStateInterface[]>("api/v1/categories")
+      .get<CategoriesResponseInterface>(
+        `api/v1/categories?page=${page}&perPage=${perPage}`
+      )
       .then((res) => {
-        setCategories(res.data);
+        setCategories(res.data.categories);
+        setPerPage(res.data.perPage);
+        setNumOfPages(Math.ceil(res.data.totalCategories / perPage));
         setIsLoading(false);
       })
       .catch((err) => {
         if (axios.isAxiosError(err)) {
-          setOpen(true);
+          alertDispatch({
+            type: "ALERT_ERROR",
+            payload: t("default_error"),
+          });
         }
       });
-  }, []);
+  }, [page]);
 
-  const loader = (
-    <>
-      <TableRow>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-      </TableRow>
-
-      <TableRow>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-        <TableCell align="center">
-          <Skeleton animation="wave" />
-        </TableCell>
-      </TableRow>
-    </>
-  );
+  const headers = [t("title"), t("slug"), t("operations")];
 
   const categoriesCell = categories.length
     ? categories.map((category) => {
@@ -130,43 +75,21 @@ export default function AllCategoriesContent() {
           </TableRow>
         );
       })
-    : loader;
+    : [];
 
   return (
-    <PaperBox title={"دسته بندی ها"}>
-      <Table sx={{}}>
-        <TableHead>
-          <TableRow>
-            <TableCell
-              sx={{
-                color: (theme: Theme) => theme.palette.textSecondary.main,
-              }}
-              align="center"
-            >
-              عنوان
-            </TableCell>
-            <TableCell
-              sx={{
-                color: (theme: Theme) => theme.palette.textSecondary.main,
-              }}
-              align="center"
-            >
-              اسلاگ
-            </TableCell>
-            <TableCell
-              sx={{
-                color: (theme: Theme) => theme.palette.textSecondary.main,
-              }}
-              align="center"
-            >
-              عملیات
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{isLoading ? loader : categoriesCell}</TableBody>
-      </Table>
-
-      <Alert open={open} handleClose={handleCloseNotify} type="error" />
-    </PaperBox>
+    <DataList
+      data={categoriesCell}
+      loading={isLoading}
+      header={headers}
+      alertState={alertState}
+      alertDispatch={alertDispatch}
+      rows={5}
+      cells={3}
+      title={t("categories")}
+      page={page}
+      setPage={setPage}
+      numOfPages={numOfPages}
+    />
   );
 }

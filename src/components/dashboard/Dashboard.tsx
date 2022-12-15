@@ -2,8 +2,10 @@ import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import DashboardCards from "./DashboardCards";
 import DashboardChart from "./DashboardChart";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   return (
     <Stack direction={"column"} spacing={3}>
       <Typography
@@ -19,7 +21,7 @@ export default function Dashboard() {
           },
         ]}
       >
-        داشبورد
+        {t("dashboard")}
       </Typography>
       <Stack sx={{ width: "fit-content" }} direction={"row"}>
         <DashboardCards />

@@ -23,4 +23,20 @@ export default class HttpRequest {
   ): Promise<R> {
     return this.instance.post(`${this.baseUrl}/${endpoint}`, data, config);
   }
+
+  public patch<T, B, R = AxiosResponse<T>>(
+    endpoint: string,
+    data?: B,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.instance.patch(`${this.baseUrl}/${endpoint}`, data, config);
+  }
+
+  public put<T, B, R = AxiosResponse<T>>(
+    endpoint: string,
+    data?: B,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.instance.put(`${this.baseUrl}/${endpoint}`, data, config);
+  }
 }

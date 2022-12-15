@@ -14,6 +14,7 @@ import {
   CategoryContext,
   CategoryContextInterface,
 } from "./context/CategoryContext";
+import { useTranslation } from "react-i18next";
 
 export interface AttributeGroupProps {
   title: string;
@@ -21,14 +22,18 @@ export interface AttributeGroupProps {
 }
 
 export default function AttributeGroup({ title, id }: AttributeGroupProps) {
+  const { t } = useTranslation();
+
   const { state, dispatch } =
     React.useContext<CategoryContextInterface>(CategoryContext);
+
+  React.useEffect(() => {}, [state]);
 
   const attributes = state.groups.length
     ? state.groups
         .find((group) => group.id === id)
         ?.attributes.map((attr) => (
-          <Attribute groupPk={id} key={attr.id} {...attr} />
+          <Attribute groupPk={id} key={attr.id} id={attr.id} />
         ))
     : "";
 
@@ -67,6 +72,7 @@ export default function AttributeGroup({ title, id }: AttributeGroupProps) {
         boxShadow: 3,
         borderRadius: (theme: Theme) => theme.spacing(1),
         padding: 1,
+        width: "100%",
       }}
     >
       <IconButton onClick={removeGroup} sx={{ width: "fit-content" }}>
@@ -86,10 +92,7 @@ export default function AttributeGroup({ title, id }: AttributeGroupProps) {
           <Divider />
         </Stack>
         <Stack direction={"row"} alignItems={"baseline"} marginLeft={"auto"}>
-          <AddButton
-            onClickHandler={addNewAttribute}
-            text="اضافه کردن ویژگی جدید"
-          />
+          <AddButton onClickHandler={addNewAttribute} text={t("add_attr")} />
         </Stack>
       </Box>
       <Stack paddingY={1} gap={1}>

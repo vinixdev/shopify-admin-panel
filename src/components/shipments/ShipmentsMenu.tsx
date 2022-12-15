@@ -9,8 +9,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ShipmentsMenu() {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -35,31 +38,33 @@ export default function ShipmentsMenu() {
         <ListItemText
           disableTypography={true}
           sx={{ fontSize: "12px", minWidth: "fit-content" }}
-          primary="مرسوله ها"
+          primary={t("shipment_menu")}
         />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton sx={{ gap: 0.5 }}>
-            <ListItemIcon
-              sx={{
-                minWidth: "fit-content",
-              }}
-            >
-              <TocRoundedIcon
-                fontSize="small"
+          <Link to={"/shipments"}>
+            <ListItemButton sx={{ gap: 0.5 }}>
+              <ListItemIcon
                 sx={{
-                  color: "textPrimary.main",
+                  minWidth: "fit-content",
                 }}
+              >
+                <TocRoundedIcon
+                  fontSize="small"
+                  sx={{
+                    color: "textPrimary.main",
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography={true}
+                sx={{ fontSize: "11px", minWidth: "fit-content" }}
+                primary={t("shipments")}
               />
-            </ListItemIcon>
-            <ListItemText
-              disableTypography={true}
-              sx={{ fontSize: "11px", minWidth: "fit-content" }}
-              primary="لیست مرسوله ها"
-            />
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
         </List>
       </Collapse>
     </List>

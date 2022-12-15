@@ -1,8 +1,11 @@
 import React from "react";
 import { Box, Menu, MenuItem, Button } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 
 export default function LanguageMenu() {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -11,6 +14,17 @@ export default function LanguageMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLngEn = (e: React.MouseEvent) => {
+    i18next.changeLanguage("en");
+    setAnchorEl(null);
+  };
+
+  const handleLngFa = (e: React.MouseEvent) => {
+    i18next.changeLanguage("fa");
+    setAnchorEl(null);
+  };
+
   return (
     <Box component={"div"}>
       <Button
@@ -26,7 +40,7 @@ export default function LanguageMenu() {
           alignItems: "center",
         }}
       >
-        فارسی
+        {t("lng")}
         {open ? <ExpandLess /> : <ExpandMore />}
       </Button>
 
@@ -39,8 +53,11 @@ export default function LanguageMenu() {
           "aria-labelledby": "menu-btn",
         }}
       >
-        <MenuItem sx={{ color: "textSecondary.main" }} onClick={handleClose}>
-          انگلیسی
+        <MenuItem sx={{ color: "textSecondary.main" }} onClick={handleLngFa}>
+          {t("lngFa")}
+        </MenuItem>
+        <MenuItem sx={{ color: "textSecondary.main" }} onClick={handleLngEn}>
+          {t("lngEn")}
         </MenuItem>
       </Menu>
     </Box>

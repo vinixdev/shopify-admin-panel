@@ -8,7 +8,6 @@ import {
   Stack,
   LinearProgress,
 } from "@mui/material";
-
 import { debounce } from "lodash";
 import { AxiosProgressEvent } from "axios";
 
@@ -19,89 +18,65 @@ import HttpRequest from "../../services/HttpRequest";
 import InputSelectCustomize from "./Select/SelectInput";
 import ProductCategoryAtteributes from "./ProductCategoryAtteributes";
 import { CategoriesInterface, ProductCategory } from "./interfaces/interfaces";
-import { editProductReducer, initialState } from "./reducer/editProductReducer";
 import Alert from "../alert/Alert";
 import Section from "../partials/Section";
 import { alertInitialState, alertReducer } from "../alert/reducer/alertReducer";
-import EditVariant from "./variant/EditVariant";
+import EditVariant, { VariantItemInterface } from "./variant/EditVariant";
+import EditVariantPrice, { VariantPrice } from "./variant/EditVariantPrice";
+import Varient from "./variant/Varient";
+import {
+  EditProductContext,
+  EditProductContextInterface,
+} from "./context/editProductContext";
+import VariantPriceItem from "./variant/VariantPriceItem";
+import {
+  emptyValidation,
+  numberValidation,
+  zeroValidation,
+} from "./validation/validation";
+import { useTranslation } from "react-i18next";
 
 export default function EditProduct() {
-  // const [categories, setCategories] = React.useState<CategoriesInterface[]>([]);
-  // const [selectedCategory, setSelectedCategory] =
-  //   React.useState<ProductCategory | null>(null)
+  const { t } = useTranslation();
 
-  const [state, dispatch] = React.useReducer(editProductReducer, initialState);
+  const { state, dispatch } =
+    React.useContext<EditProductContextInterface>(EditProductContext);
   const [progress, setProgress] = React.useState<number>(0);
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [editVariantOpen, setEditVariantOpen] = React.useState<boolean>(false);
+  const [editVariantPriceOpen, setEditVariantPriceOpen] =
+    React.useState<boolean>(false);
 
   const [alertState, alertDispatch] = React.useReducer(
     alertReducer,
     alertInitialState
   );
 
-  // const [alertOption, setAlertOption] = React.useState<AlertOptionInterface>({
-  //   message: "",
-  //   type: "success",
-  //   open: false,
-  // });
+  const [formErrors, setFormErrors] = React.useState<Map<string, boolean>>(
+    new Map<string, boolean>()
+  );
+
+  const [title, setTitle] = React.useState<string>("");
+  const [price, setPrice] = React.useState<string>("");
+  const [specialPrice, setSpecialPrice] = React.useState<string>("");
+  const [inventory, setInventory] = React.useState<string>("");
+  const [categoryId, setCategoryId] = React.useState<string>("");
+
+  const [thumbnailError, setThumbnailError] = React.useState<boolean>(false);
 
   const http = new HttpRequest();
 
   React.useEffect(() => {
-    http
-      .get<CategoriesInterface[]>(
-        "api/v1/categories?select[]=title&select[]=slug"
-      )
-      .then((res) => {
-        // setCategories(res.data);
-        dispatch({
-          type: "SET_CATEGORIES",
-          payload: res.data,
-        });
-      });
-  }, []);
-
-  function handleSelectCategory(e: React.ChangeEvent<HTMLSelectElement>) {
-    const { value } = e.target;
-    if (value) {
-      http.get<ProductCategory>(`api/v1/categories/${value}`).then((res) => {
-        // setSelectedCategory(res.data);
-        dispatch({
-          type: "SET_SELECTED_CATEGORIES",
-          payload: res.data,
-        });
-      });
-    } else {
-      // setSelectedCategory(null);
+    http.get<CategoriesInterface[]>("api/v1/categories").then((res) => {
+      // setCategories(res.data);
       dispatch({
-        type: "SET_SELECTED_CATEGORIES",
-        payload: null,
+        type: "SET_CATEGORIES",
+        payload: res.data,
       });
-    }
-  }
+    });
+  }, []);
 
   const changeAtteributeValue = debounce(
     (value: string, groupId: string, attrId: string) => {
-      console.log(value);
-      // setSelectedCategory((prev) => {
-      //   if (prev) {
-      //     return {
-      //       ...prev,
-      //       groups: prev.groups.map((group) => {
-      //         if (group.id === groupId) {
-      //           group.attributes.map((attr) => {
-      //             if (attr.id === attrId) {
-      //               attr.value = value;
-      //             }
-      //             return attr;
-      //           });
-      //         }
-      //         return group;
-      //       }),
-      //     };
-      //   }
-      //   return null;
-      // });
       dispatch({
         type: "UPDATE_ATTRIBUTE_VALUE",
         payload: {
@@ -111,7 +86,7 @@ export default function EditProduct() {
         },
       });
     },
-    1500
+    500
   );
 
   function handleAtteributeValue(
@@ -129,70 +104,243 @@ export default function EditProduct() {
     });
   }
 
+  function handleSubmitVariant(variant: VariantItemInterface) {
+    dispatch({
+      type: "ADD_VARIANT",
+      payload: {
+        title: variant.title,
+        slug: variant.slug,
+        type: variant.type,
+      },
+    });
+    setEditVariantOpen(false);
+  }
+
+  function handleSubmitVariantPrice(variantPrice: VariantPrice) {
+    dispatch({
+      type: "ADD_VARIANT_PRICE",
+      payload: variantPrice,
+    });
+    setEditVariantPriceOpen(false);
+  }
+
   function handleSaveBtn(e: React.MouseEvent) {
     e.preventDefault();
     setProgress(0);
-    const form = new FormData();
-    form.append("thumbnail", state.thumbnail as Blob);
-    state.gallery.forEach((img) => {
-      form.append("gallery[]", img as Blob);
-    });
-    http
-      .post("api/v1/products", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-          if (progressEvent.total) {
-            const amount: number =
-              (progressEvent.loaded * 100) / progressEvent.total;
-            setProgress(Math.round(amount));
-          }
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        alertDispatch({
-          type: "ALERT_SUCCESS",
-          payload: "عملیات با موفقیت انجام شد.",
-        });
-      })
-      .catch((err) => {
-        if (err) {
-          alertDispatch({
-            type: "ALERT_ERROR",
-            payload: "خطایی رخ داده است.",
+
+    if (!title) {
+      setFormErrors(formErrors.set("title", true));
+    }
+
+    if (!price) {
+      setFormErrors(formErrors.set("price", true));
+    }
+
+    if (!inventory) {
+      setFormErrors(formErrors.set("inventory", true));
+    }
+
+    if (!categoryId) {
+      setFormErrors(formErrors.set("category", true));
+    }
+
+    if (title && price && inventory && categoryId !== "None") {
+      let empty_attr = false;
+      if (state.selectedCategory) {
+        state.selectedCategory.groups.forEach((group) => {
+          group.attributes.forEach((attr) => {
+            if (!attr.value) {
+              empty_attr = true;
+            }
           });
-        }
+        });
+      }
+      if (empty_attr) {
+        alertDispatch({
+          type: "ALERT_ERROR",
+          payload: t("fill_filed_attr_error"),
+        });
+        return;
+      }
+
+      const form = new FormData();
+
+      form.append("title", title);
+      form.append("price", `${price}`);
+      form.append("stock", `${inventory}`);
+      form.append("category", categoryId);
+
+      if (specialPrice) {
+        form.append("specialPrice", `${specialPrice}`);
+      }
+      if (state.thumbnail === null) {
+        setThumbnailError(true);
+        alertDispatch({
+          type: "ALERT_ERROR",
+          payload: t("thumbnail_upload_error"),
+        });
+        return;
+      }
+      form.append("thumbnail", state.thumbnail as Blob);
+      state.gallery.forEach((img) => {
+        form.append("gallery", img as Blob);
       });
+
+      form.append("attributes", JSON.stringify(state.selectedCategory?.groups));
+
+      form.append("variants", JSON.stringify(state.variants));
+
+      form.append("variantsPrice", JSON.stringify(state.variantsPrice));
+
+      http
+        .post("api/v1/products", form, {})
+        .then((res) => {
+          alertDispatch({
+            type: "ALERT_SUCCESS",
+            payload: t("success_msg"),
+          });
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      alertDispatch({
+        type: "ALERT_ERROR",
+        payload: t("fill_fields_error"),
+      });
+    }
+  }
+
+  function handleSelectCategory(e: React.ChangeEvent<HTMLSelectElement>) {
+    const { value } = e.target;
+    if (value) {
+      formErrors.delete(e.target.name);
+      setFormErrors(formErrors);
+      setCategoryId(e.target.value);
+      http.get<ProductCategory>(`api/v1/categories/${value}`).then((res) => {
+        dispatch({
+          type: "SET_SELECTED_CATEGORIES",
+          payload: res.data,
+        });
+      });
+    } else {
+      setFormErrors(formErrors.set(e.target.name, true));
+      setCategoryId("");
+      dispatch({
+        type: "SET_SELECTED_CATEGORIES",
+        payload: null,
+      });
+    }
   }
 
   return (
-    <PaperBox title="اضافه / ویرایش محصول">
+    <PaperBox title={t("edit_product")}>
       <Box component={"form"} display={"flex"} flexDirection={"column"} gap={1}>
         <Stack direction={"row"} gap={1}>
           <Stack width={"fit-content"} gap={1}>
             <FormControl>
-              <InputField required={true} placeholder="عنوان محصول" />
+              <InputField
+                value={title}
+                required={true}
+                placeholder={t("title")}
+                name="title"
+                onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const isEmpty = emptyValidation(e.target.value);
+                  if (isEmpty) {
+                    setFormErrors(formErrors.set(e.target.name, true));
+                    setTitle("");
+                    return;
+                  }
+                  formErrors.delete(e.target.name);
+                  setFormErrors(formErrors);
+                  setTitle(e.target.value);
+                }}
+                error={formErrors.has("title")}
+              />
             </FormControl>
             <FormControl>
-              <InputField required={true} placeholder="قیمت محصول" />
+              <InputField
+                value={price}
+                required={true}
+                placeholder={t("price")}
+                name="price"
+                onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const isEmpty = emptyValidation(e.target.value);
+                  const isNumber = numberValidation(
+                    e.target.value,
+                    alertDispatch
+                  );
+                  const isZero = zeroValidation(e.target.value, alertDispatch);
+                  if (isEmpty || isZero || !isNumber) {
+                    setFormErrors(formErrors.set(e.target.name, true));
+                    setPrice("");
+                    return;
+                  }
+                  formErrors.delete(e.target.name);
+                  setFormErrors(formErrors);
+                  setPrice(e.target.value);
+                }}
+                error={formErrors.has("price")}
+              />
             </FormControl>
             <FormControl>
-              <InputField required={true} placeholder="قیمت ویژه" />
+              <InputField
+                value={specialPrice}
+                placeholder={t("special_price")}
+                name="specialPrice"
+                onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const isNumber = numberValidation(
+                    e.target.value,
+                    alertDispatch
+                  );
+                  if (!isNumber) {
+                    setFormErrors(formErrors.set(e.target.name, true));
+                    setSpecialPrice("");
+                    return;
+                  }
+                  formErrors.delete(e.target.name);
+                  setFormErrors(formErrors);
+                  setSpecialPrice(e.target.value);
+                }}
+                error={formErrors.has("specialPrice")}
+              />
             </FormControl>
             <FormControl>
-              <InputField required={true} placeholder="تعداد موجود" />
+              <InputField
+                value={inventory}
+                required={true}
+                name="inventory"
+                placeholder={t("stock")}
+                onChangeHandler={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const isEmpty = emptyValidation(e.target.value);
+                  const isNumber = numberValidation(
+                    e.target.value,
+                    alertDispatch
+                  );
+                  const isZero = zeroValidation(e.target.value, alertDispatch);
+                  if (isEmpty || isZero || !isNumber) {
+                    setFormErrors(formErrors.set(e.target.name, true));
+                    setInventory("");
+                    return;
+                  }
+                  formErrors.delete(e.target.name);
+                  setFormErrors(formErrors);
+                  setInventory(e.target.value);
+                }}
+                error={formErrors.has("inventory")}
+              />
             </FormControl>
             <FormControl>
               <NativeSelect
                 onChange={handleSelectCategory}
                 required={true}
+                value={categoryId}
                 input={<InputSelectCustomize />}
+                name={"category"}
+                error={formErrors.has("category")}
               >
-                <option aria-label="None" value="">
-                  انتخاب دسته بندی
-                </option>
+                <option value="">{t("choose_category")}</option>
                 {state.categories.length
                   ? state.categories.map((category) => {
                       return (
@@ -209,17 +357,18 @@ export default function EditProduct() {
             <UploadBox
               width={"100%"}
               height={"100%"}
-              title={"برای آپلود عکس شاخص کلیک کنید"}
+              title={t("thumbnail_upload")}
               handler={(file: File) =>
                 dispatch({ type: "SET_THUMBNAIL", payload: file })
               }
+              error={thumbnailError}
             />
             <Grid container spacing={1}>
               <Grid item xs={6}>
                 <UploadBox
                   width={"100%"}
                   height={"100%"}
-                  title={"برای آپلود عکس گالری کلیک کنید"}
+                  title={t("gallery_upload")}
                   fontSize={8}
                   handler={(file: File) =>
                     dispatch({ type: "ADD_ITEM_TO_GALLERY", payload: file })
@@ -230,7 +379,7 @@ export default function EditProduct() {
                 <UploadBox
                   width={"100%"}
                   height={"100%"}
-                  title={"برای آپلود عکس گالری کلیک کنید"}
+                  title={t("gallery_upload")}
                   fontSize={8}
                   handler={(file: File) =>
                     dispatch({ type: "ADD_ITEM_TO_GALLERY", payload: file })
@@ -241,7 +390,7 @@ export default function EditProduct() {
                 <UploadBox
                   width={"100%"}
                   height={"100%"}
-                  title={"برای آپلود عکس گالری کلیک کنید"}
+                  title={t("gallery_upload")}
                   fontSize={8}
                   handler={(file: File) =>
                     dispatch({ type: "ADD_ITEM_TO_GALLERY", payload: file })
@@ -252,7 +401,7 @@ export default function EditProduct() {
                 <UploadBox
                   width={"100%"}
                   height={"100%"}
-                  title={"برای آپلود عکس گالری کلیک کنید"}
+                  title={t("gallery_upload")}
                   fontSize={8}
                   handler={(file: File) =>
                     dispatch({ type: "ADD_ITEM_TO_GALLERY", payload: file })
@@ -273,7 +422,7 @@ export default function EditProduct() {
           variant="determinate"
         />
 
-        <Grid container spacing={2} marginTop={1}>
+        <Grid container spacing={2} marginTop={1} alignItems={"stretch"}>
           {state.selectedCategory
             ? state.selectedCategory.groups.map((group) => {
                 return (
@@ -292,19 +441,42 @@ export default function EditProduct() {
         </Grid>
 
         <Section
-          header="متغیرهای محصول"
-          btnTitle="اضافه کردن متغیر محصول جدید"
-          onClickHandler={(e: React.MouseEvent) => setOpen(true)}
+          header={t("product_variants")}
+          btnTitle={t("add_variant")}
+          onClickHandler={(e: React.MouseEvent) => setEditVariantOpen(true)}
         >
-          <></>
+          <Stack direction={"column"} gap={2}>
+            {state.variants.length
+              ? state.variants
+                  .map((variant) => {
+                    return <Varient key={variant.hash} variant={variant} />;
+                  })
+                  .reverse()
+              : ""}
+          </Stack>
         </Section>
 
         <Section
-          header="متغیرهای قیمت"
-          btnTitle="اضافه کردن متغیر قیمت جدید"
-          onClickHandler={(e: React.MouseEvent) => console.log("Yeah!")}
+          header={t("price_variants")}
+          btnTitle={t("add_price_variant")}
+          onClickHandler={(e: React.MouseEvent) => {
+            if (state.variants.length) {
+              setEditVariantPriceOpen(true);
+            } else {
+              alertDispatch({
+                type: "ALERT_ERROR",
+                payload: t("first_add_variant_error"),
+              });
+            }
+          }}
         >
-          <></>
+          <Stack direction={"column"} gap={1}>
+            {state.variantsPrice.length
+              ? state.variantsPrice.map((vp) => {
+                  return <VariantPriceItem key={vp.hash} vp={vp} />;
+                })
+              : ""}
+          </Stack>
         </Section>
 
         <FormControl>
@@ -321,7 +493,7 @@ export default function EditProduct() {
             }}
             onClick={handleSaveBtn}
           >
-            ذخیره سازی
+            {t("save")}
           </Button>
         </FormControl>
       </Box>
@@ -332,9 +504,15 @@ export default function EditProduct() {
         handleClose={handleCloseAlert}
       />
       <EditVariant
-        open={open}
-        onSubmitHandler={(variant: any) => console.log(variant)}
-        onCloseHandler={(e: React.MouseEvent) => setOpen(false)}
+        open={editVariantOpen}
+        onSubmitHandler={handleSubmitVariant}
+        onCloseHandler={(e: React.MouseEvent) => setEditVariantOpen(false)}
+      />
+      <EditVariantPrice
+        open={editVariantPriceOpen}
+        variants={state.variants}
+        onSubmitHandler={handleSubmitVariantPrice}
+        onCloseHandler={() => setEditVariantPriceOpen(false)}
       />
     </PaperBox>
   );

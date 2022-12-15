@@ -12,7 +12,7 @@ export const alertInitialState: AlertStateInterface = {
   message: "",
 };
 
-type ALERT_ACTION_TYPE = {
+export type ALERT_ACTION_TYPE = {
   type: string;
   payload: any;
 };

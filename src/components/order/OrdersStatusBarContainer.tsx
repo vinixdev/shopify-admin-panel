@@ -1,8 +1,10 @@
 import { Box, Stack } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import OrderStatusBar from "./OrderStatusBar";
 
 export default function OrderStatusBarContainer() {
+  const { t } = useTranslation();
   return (
     <Stack padding={1.5} gap={3}>
       <OrderStatusBar
@@ -10,7 +12,7 @@ export default function OrderStatusBarContainer() {
         min={0}
         max={854}
         step={50}
-        title={"ارسال شده"}
+        title={t("sent")}
         enTitle={"Sended Orders"}
       />
       <OrderStatusBar
@@ -18,7 +20,7 @@ export default function OrderStatusBarContainer() {
         min={0}
         max={854}
         step={50}
-        title={"تحویل داده شده"}
+        title={t("delivered")}
         enTitle={"deliverd Orders"}
       />
       <OrderStatusBar
@@ -26,7 +28,7 @@ export default function OrderStatusBarContainer() {
         min={0}
         max={854}
         step={50}
-        title={"پرداخت شده"}
+        title={t("paid")}
         enTitle={"Paid Orders"}
       />
       <OrderStatusBar
@@ -34,7 +36,7 @@ export default function OrderStatusBarContainer() {
         min={0}
         max={854}
         step={50}
-        title={"مرجوع شده"}
+        title={t("refunded")}
         enTitle={"Funded Orders"}
       />
     </Stack>

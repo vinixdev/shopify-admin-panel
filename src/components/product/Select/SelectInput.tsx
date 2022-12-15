@@ -21,6 +21,19 @@ const InputSelectCustomize = styled(InputBase)(({ theme }) => ({
   "& .MuiNativeSelect-icon": {
     color: theme.palette.textSecondary.light,
   },
+  "&": {
+    borderRadius: theme.spacing(3.2),
+    borderColor: "transparent",
+    borderWidth: theme.spacing(0.3),
+    borderStyle: "solid",
+  },
+  "&.Mui-error": {
+    borderColor: "#d32f2f",
+    // "& .MuiInputBase-input::placeholder": {
+    //   color: "#d32f2f",
+    //   opacity: 0.8,
+    // },
+  },
 }));
 
 export default InputSelectCustomize;

@@ -10,8 +10,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function OrderMenu() {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -36,32 +39,34 @@ export default function OrderMenu() {
         <ListItemText
           disableTypography={true}
           sx={{ fontSize: "12px", minWidth: "fit-content" }}
-          primary="مدیریت سفارش ها"
+          primary={t("order_menu")}
         />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton sx={{ gap: 0.5 }}>
-            <ListItemIcon
-              sx={{
-                minWidth: "fit-content",
-              }}
-            >
-              <TocRoundedIcon
-                fontSize="small"
+          <Link to={"/orders"}>
+            <ListItemButton sx={{ gap: 0.5 }}>
+              <ListItemIcon
                 sx={{
-                  color: "textPrimary.main",
+                  minWidth: "fit-content",
                 }}
+              >
+                <TocRoundedIcon
+                  fontSize="small"
+                  sx={{
+                    color: "textPrimary.main",
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography={true}
+                sx={{ fontSize: "11px", minWidth: "fit-content" }}
+                primary={t("orders")}
               />
-            </ListItemIcon>
-            <ListItemText
-              disableTypography={true}
-              sx={{ fontSize: "11px", minWidth: "fit-content" }}
-              primary="لیست سفارش ها"
-            />
-            <Badge color="error" badgeContent={"+999"} overlap="circular" />
-          </ListItemButton>
+              <Badge color="error" badgeContent={"+999"} overlap="circular" />
+            </ListItemButton>
+          </Link>
         </List>
       </Collapse>
     </List>

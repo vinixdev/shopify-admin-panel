@@ -7,8 +7,10 @@ import {
   ArgumentAxis,
 } from "@devexpress/dx-react-chart-material-ui";
 import { ValueScale, Animation } from "@devexpress/dx-react-chart";
+import { useTranslation } from "react-i18next";
 
 export default function DashboardChart() {
+  const { t } = useTranslation();
   const theme: Theme = useTheme();
   type dataType = {
     month: string;
@@ -48,7 +50,7 @@ export default function DashboardChart() {
               : "textPrimary.light",
         }}
       >
-        میانگین درآمد ماهیانه
+        {t("avg_income")}
       </Typography>
       <Chart height={Number.parseInt(theme.spacing(20))} data={data}>
         {/* <ArgumentAxis />

@@ -3,7 +3,11 @@ import React, {
   ReactElement,
   ReactFragment,
   ReactPortal,
+  Suspense,
+  useEffect,
 } from "react";
+
+import { Helmet } from "react-helmet";
 
 // import { ThemeProvider } from "@emotion/react";
 import {
@@ -12,9 +16,11 @@ import {
   GlobalStyles,
   Paper,
   ThemeProvider,
+  Theme,
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+// import { faIR, zhCN } from "@mui/material/locale";
 import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
@@ -25,6 +31,30 @@ import {
   ThemeContext,
   ThemeContextInterface,
 } from "./components/theme_switch/context/themeContext";
+
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+import HttpApi from "i18next-http-backend";
+import Cookies from "js-cookie";
+
+i18n
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .use(HttpApi)
+  .init({
+    supportedLngs: ["fa", "en"],
+    fallbackLng: "fa",
+    detection: {
+      order: ["cookie", "htmlTag", "localStorage", "path", "subdomain"],
+      caches: ["cookie"],
+    },
+    backend: {
+      loadPath: "/assets/locales/{{lng}}/translation.json",
+    },
+    // lng: "fa",
+    // react: { useSuspense: false },
+  });
 
 declare module "@mui/material/styles" {
   interface Theme {}
@@ -62,14 +92,15 @@ declare module "@mui/material/styles" {
 }
 
 function App() {
-  const prefersDarkMode: boolean = useMediaQuery(
-    "(prefers-color-scheme: dark)"
-  );
+  // const prefersDarkMode: boolean = useMediaQuery(
+  //   "(prefers-color-scheme: dark)"
+  // );
 
   const { mode } = React.useContext<ThemeContextInterface>(ThemeContext);
+  const currentLanguageCode = Cookies.get("i18next") || "fa";
 
   const theme = createTheme({
-    direction: "rtl",
+    direction: currentLanguageCode === "fa" ? "rtl" : "ltr",
     spacing: 10,
     palette: {
       // mode: prefersDarkMode ? "dark" : "light",
@@ -118,67 +149,94 @@ function App() {
       },
     },
     typography: {
-      fontFamily: ["Iransans", "Vazir", "sans-serif"].join(","),
+      fontFamily:
+        currentLanguageCode === "fa"
+          ? ["Iransans", "Vazir", "sans-serif"].join(",")
+          : ["sans-serif"].join(","),
     },
   });
 
   // Create rtl cache
-  const cacheRtl = createCache({
-    key: "muirtl",
-    stylisPlugins: [prefixer, rtlPlugin],
-  });
+  const cacheRtlParam =
+    currentLanguageCode === "fa"
+      ? {
+          key: "muirtl",
+          stylisPlugins: [prefixer, rtlPlugin],
+        }
+      : {
+          key: "muiltr",
+          // stylisPlugins: [prefixer, rtlPlugin],
+        };
+  const cacheRtl = createCache(cacheRtlParam);
 
-  function RTL(props: {
-    children:
-      | string
-      | number
-      | boolean
-      | ReactElement<any, string | JSXElementConstructor<any>>
-      | ReactFragment
-      | ReactPortal
-      | null
-      | undefined;
-  }) {
-    return <CacheProvider value={cacheRtl}>{props.children}</CacheProvider>;
-  }
+  // function RTL(props: {
+  //   children:
+  //     | string
+  //     | number
+  //     | boolean
+  //     | ReactElement<any, string | JSXElementConstructor<any>>
+  //     | ReactFragment
+  //     | ReactPortal
+  //     | null
+  //     | undefined;
+  // }) {
+  //   return <CacheProvider value={cacheRtl}>{props.children}</CacheProvider>;
+  // }
+
+  const { t } = useTranslation();
 
   return (
-    <CacheProvider value={cacheRtl}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <GlobalStyles
-          styles={{
-            a: {
-              textDecoration: "none",
-              color: "#fff",
-              transition: "all 0.3s ease-in-out",
-              "&:hover": {
-                color: "#c4c4c4",
+    <Suspense fallback={"..."}>
+      <CacheProvider value={cacheRtl}>
+        <ThemeProvider theme={theme}>
+          <Helmet>
+            <title>{t("main_title")}</title>
+            <meta name="description" content="Helmet application" />
+          </Helmet>
+          <CssBaseline />
+          <GlobalStyles
+            styles={{
+              a: {
+                textDecoration: "none",
+                color: "#fff",
+                transition: "all 0.3s ease-in-out",
+                "&:hover": {
+                  color: "#c4c4c4",
+                },
               },
-            },
-            body: {
-              height: "100%",
-            },
-          }}
-        />
-        <Box
-          sx={[
-            {
-              padding: 2,
-              height: "100vh",
-              backgroundImage: "linear-gradient(to left, #E7E7EF, #C0C2D4)",
-            },
-            (theme) => ({
-              [theme.breakpoints.down("md")]: {
-                padding: 0,
+              body: {
+                height: "100%",
+                direction: "ltr",
               },
-            }),
-          ]}
-        >
-          <Panel />
-        </Box>
-      </ThemeProvider>
-    </CacheProvider>
+              "::-webkit-scrollbar ": {
+                width: "10px",
+                backgroundColor: "transparent",
+              },
+              "::-webkit-scrollbar-thumb": {
+                width: "10px",
+                backgroundColor: "#6b52e5",
+              },
+            }}
+          />
+          <Box
+            sx={[
+              {
+                padding: 2,
+                height: "100vh",
+                backgroundImage: "linear-gradient(to left, #E7E7EF, #C0C2D4)",
+              },
+              (theme) => ({
+                [theme.breakpoints.down("md")]: {
+                  padding: 0,
+                },
+              }),
+            ]}
+          >
+            <Panel />
+          </Box>
+        </ThemeProvider>
+      </CacheProvider>
+    </Suspense>
   );
 }
 

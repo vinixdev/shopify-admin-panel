@@ -1,29 +1,37 @@
 import React from "react";
-import { FormControlLabel, IconButton, Stack, Switch } from "@mui/material";
+import {
+  FormControl,
+  FormControlLabel,
+  IconButton,
+  Stack,
+  Switch,
+} from "@mui/material";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import InputField from "../SearchForm/Input/InputField";
 import {
   CategoryContext,
   CategoryContextInterface,
 } from "./context/CategoryContext";
+import { useTranslation } from "react-i18next";
 
 export interface AttributeProps {
-  title: string;
-  slug: string;
-  filterable: false;
-  hasPrice: false;
   groupPk: string;
   id: string;
 }
 
-export default function Attribute({
-  title,
-  slug,
-  filterable,
-  hasPrice,
-  groupPk,
-  id,
-}: AttributeProps) {
+export default function Attribute({ groupPk, id }: AttributeProps) {
+  const { t } = useTranslation();
+
+  const [formErrors, setFormErrors] = React.useState<Map<string, boolean>>(
+    new Map<string, boolean>()
+  );
+
+  const [titleValue, setTitleValue] = React.useState<string>("");
+  const [slugValue, setSlugValue] = React.useState<string>("");
+
+  const [filterableValue, setFilterableValue] = React.useState<boolean>(false);
+  const [hasPriceValue, setHasPriceValue] = React.useState<boolean>(false);
+
   const { dispatch } =
     React.useContext<CategoryContextInterface>(CategoryContext);
 
@@ -38,23 +46,48 @@ export default function Attribute({
     });
   }
 
-  function onBlurInputHandler(e: React.FocusEvent<HTMLInputElement>) {
+  function onChangeInputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
 
-    dispatch({
-      type: "UPDATE_ATTERIBUTE",
-      payload: {
-        [e.currentTarget.name]: e.currentTarget.value,
-        name: [e.currentTarget.name],
-        attrPk: id,
-        groupPk: groupPk,
-      },
-    });
+    if (e.target.name === "title") {
+      setTitleValue(e.target.value);
+    }
+
+    if (e.target.name === "slug") {
+      setSlugValue(e.target.value);
+    }
+
+    if (!e.target.value) {
+      setFormErrors(formErrors.set(e.target.name, true));
+      return false;
+    }
+
+    formErrors.delete(e.target.name);
+    setFormErrors(formErrors);
+  }
+
+  function onBlurInputHandler(e: React.FocusEvent<HTMLInputElement>) {
+    if (e.target.value) {
+      dispatch({
+        type: "UPDATE_ATTERIBUTE",
+        payload: {
+          [e.currentTarget.name]: e.currentTarget.value,
+          name: [e.currentTarget.name],
+          attrPk: id,
+          groupPk: groupPk,
+        },
+      });
+    }
   }
 
   function onCheckedHandler(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-
+    if (e.target.name === "filterable") {
+      setFilterableValue(e.target.checked);
+    }
+    if (e.target.name === "hasPrice") {
+      setHasPriceValue(e.target.checked);
+    }
     dispatch({
       type: "UPDATE_ATTERIBUTE",
       payload: {
@@ -67,26 +100,36 @@ export default function Attribute({
   }
 
   return (
-    <Stack gap={1} direction={"row"} component={"form"} alignItems="center">
+    <Stack gap={1} direction={"row"} component={"div"} alignItems="center">
       <IconButton onClick={removeAttribute} sx={{ width: "fit-content" }}>
         <CancelRoundedIcon color="primary" />
       </IconButton>
-      <InputField
-        onBlurHandler={onBlurInputHandler}
-        placeholder="عنوان ویژگی - فارسی"
-        value={title}
-        size={20}
-        name="title"
-        field_id="title"
-      />
-      <InputField
-        onBlurHandler={onBlurInputHandler}
-        name="slug"
-        field_id="slug"
-        placeholder="اسلاگ ویژگی - انگلیسی"
-        value={slug}
-        size={20}
-      />
+      <FormControl>
+        <InputField
+          onChangeHandler={onChangeInputHandler}
+          onBlurHandler={onBlurInputHandler}
+          placeholder={t("title")}
+          value={titleValue}
+          size={20}
+          required
+          name="title"
+          field_id="title"
+          error={formErrors.has("title")}
+        />
+      </FormControl>
+      <FormControl>
+        <InputField
+          onChangeHandler={onChangeInputHandler}
+          onBlurHandler={onBlurInputHandler}
+          name="slug"
+          required
+          field_id="slug"
+          placeholder={t("slug")}
+          value={slugValue}
+          size={20}
+          error={formErrors.has("slug")}
+        />
+      </FormControl>
       <FormControlLabel
         sx={{
           flexShrink: "0",
@@ -96,11 +139,11 @@ export default function Attribute({
             onChange={onCheckedHandler}
             name="filterable"
             id="filterable"
-            checked={filterable}
+            checked={filterableValue}
             size="small"
           />
         }
-        label="قابل فیلتر"
+        label={t("filterable")}
       />
       <FormControlLabel
         sx={{
@@ -110,12 +153,12 @@ export default function Attribute({
           <Switch
             name="hasPrice"
             id="hasPrice"
-            checked={hasPrice}
+            checked={hasPriceValue}
             size="small"
             onChange={onCheckedHandler}
           />
         }
-        label="تاثیر روی قیمت"
+        label={t("hasPrice")}
       />
     </Stack>
   );

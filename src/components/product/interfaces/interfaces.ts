@@ -29,3 +29,21 @@ export interface AlertOptionInterface {
   type: "success" | "error";
   open: boolean;
 }
+
+export interface AllProductsInterface {
+  id: string;
+  title: string;
+  price: number;
+  thumbnail: string;
+  status: number;
+  updated_at: string;
+  created_at: string;
+  gallery: string[];
+  stock: number;
+}
+
+export interface ProductsResponseInterface {
+  products: AllProductsInterface[];
+  perPage: number;
+  totalProducts: number;
+}

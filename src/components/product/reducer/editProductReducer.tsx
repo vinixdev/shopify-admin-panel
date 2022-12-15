@@ -1,12 +1,34 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import { CategoriesInterface, ProductCategory } from "../interfaces/interfaces";
 
-export interface VariantInterface {
-  id: string;
+export interface VariantItemInterface {
+  hash: string;
   title: string;
-  slug: string;
   value: string;
 }
+
+export interface VariantInterface {
+  hash: string;
+  title: string;
+  slug: string;
+  type: string;
+  items: VariantItemInterface[];
+}
+
+export interface selectedVariantsInterface {
+  variant: string;
+  item: string;
+}
+
+export interface VariantPriceInterface {
+  hash: string;
+  variants: selectedVariantsInterface[];
+  price: number;
+  inventory: number;
+}
+
+// {id:string, variants:[{variant: id, item: item-id}], price: 2000, inventory: 5}
 
 export interface EditProductStateInterface {
   categories: CategoriesInterface[];
@@ -14,6 +36,7 @@ export interface EditProductStateInterface {
   thumbnail: File | null;
   gallery: File[];
   variants: VariantInterface[];
+  variantsPrice: VariantPriceInterface[];
 }
 
 export const initialState: EditProductStateInterface = {
@@ -22,16 +45,17 @@ export const initialState: EditProductStateInterface = {
   thumbnail: null,
   gallery: [],
   variants: [],
+  variantsPrice: [],
 };
 
-type ACTION_TYPE = {
+export type EDIT_PRODUCT_ACTION_TYPE = {
   type: string;
   payload: any;
 };
 
 export const editProductReducer = (
   state: EditProductStateInterface = initialState,
-  action: ACTION_TYPE
+  action: EDIT_PRODUCT_ACTION_TYPE
 ): EditProductStateInterface => {
   switch (action.type) {
     case "SET_CATEGORIES":
@@ -75,6 +99,56 @@ export const editProductReducer = (
         };
       }
       return state;
+    case "ADD_VARIANT":
+      console.log(action.payload);
+      const newState = {
+        ...state,
+        variants: [
+          {
+            hash: uuidv4(),
+            title: action.payload.title,
+            slug: action.payload.slug,
+            type: action.payload.type,
+            items: [],
+          },
+          ...state.variants,
+        ],
+      };
+      console.log(newState);
+      return newState;
+    case "ADD_VARIANT_ITEM":
+      console.log(action.payload);
+      const newState2 = {
+        ...state,
+        variants: state.variants.map((variant) => {
+          if (variant.hash === action.payload.variantId) {
+            variant.items = [
+              ...variant.items,
+              {
+                hash: uuidv4(),
+                title: action.payload.title,
+                value: action.payload.value,
+              },
+            ];
+          }
+          return variant;
+        }),
+      };
+      console.log(newState2);
+      return newState2;
+    case "ADD_VARIANT_PRICE":
+      return {
+        ...state,
+        variantsPrice: [
+          ...state.variantsPrice,
+          {
+            hash: uuidv4(),
+            price: action.payload.price,
+            inventory: action.payload.inventory,
+            variants: action.payload.variants,
+          },
+        ],
+      };
     default:
       return state;
   }

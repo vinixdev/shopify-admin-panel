@@ -14,8 +14,10 @@ import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import RedeemRoundedIcon from "@mui/icons-material/RedeemRounded";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ProductMenu() {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -40,7 +42,7 @@ export default function ProductMenu() {
         <ListItemText
           disableTypography={true}
           sx={{ fontSize: "12px", minWidth: "fit-content" }}
-          primary="مدیریت محصولات"
+          primary={t("product_menu")}
         />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
@@ -63,7 +65,7 @@ export default function ProductMenu() {
               <ListItemText
                 disableTypography={true}
                 sx={{ fontSize: "11px", minWidth: "fit-content" }}
-                primary="محصول جدید"
+                primary={t("new_product")}
               />
             </ListItemButton>
           </Link>
@@ -84,7 +86,7 @@ export default function ProductMenu() {
               <ListItemText
                 disableTypography={true}
                 sx={{ fontSize: "11px", minWidth: "fit-content" }}
-                primary="لیست محصولات"
+                primary={t("products")}
               />
             </ListItemButton>
           </Link>
@@ -105,7 +107,7 @@ export default function ProductMenu() {
               <ListItemText
                 disableTypography={true}
                 sx={{ fontSize: "11px", minWidth: "fit-content" }}
-                primary="دسته بندی ها"
+                primary={t("categories")}
               />
             </ListItemButton>
           </Link>
@@ -126,7 +128,7 @@ export default function ProductMenu() {
               <ListItemText
                 disableTypography={true}
                 sx={{ fontSize: "11px", minWidth: "fit-content" }}
-                primary="دسته بندی جدید"
+                primary={t("new_category")}
               />
             </ListItemButton>
           </Link>
@@ -146,7 +148,7 @@ export default function ProductMenu() {
             <ListItemText
               disableTypography={true}
               sx={{ fontSize: "11px", minWidth: "fit-content" }}
-              primary="پیشنهاد های ویژه"
+              primary={t("offers")}
             />
           </ListItemButton>
         </List>

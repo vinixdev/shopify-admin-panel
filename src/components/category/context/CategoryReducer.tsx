@@ -26,14 +26,7 @@ export const initialState: CategoryStateInterface = {
   id: uuidv4(),
   title: "",
   slug: "",
-  groups: [
-    {
-      title: "مشخصات کلی",
-      slug: "Base Specification",
-      attributes: [],
-      id: uuidv4(),
-    },
-  ],
+  groups: [],
 };
 
 export type CATEGORTY_ACTION_TYPES = {
@@ -126,7 +119,14 @@ export const categoryReducer = function (
           return group;
         }),
       };
-
+    case "RESET_STATE":
+      return {
+        ...state,
+        id: uuidv4(),
+        title: "",
+        slug: "",
+        groups: [],
+      };
     default:
       return state;
   }

@@ -1,7 +1,7 @@
 import React from "react";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
+import SettingsApplicationsRoundedIcon from "@mui/icons-material/SettingsApplicationsRounded";
+import AddchartRoundedIcon from "@mui/icons-material/AddchartRounded";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Collapse,
@@ -10,8 +10,12 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsMenu() {
+  const { t } = useTranslation();
+
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -36,51 +40,54 @@ export default function SettingsMenu() {
         <ListItemText
           disableTypography={true}
           sx={{ fontSize: "12px", minWidth: "fit-content" }}
-          primary="تنظیمات"
+          primary={t("setting_menu")}
         />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton sx={{ gap: 0.5 }}>
-            <ListItemIcon
-              sx={{
-                minWidth: "fit-content",
-              }}
-            >
-              <ManageAccountsRoundedIcon
-                fontSize="small"
+          <Link to={"/settings/new"}>
+            <ListItemButton sx={{ gap: 0.5 }}>
+              <ListItemIcon
                 sx={{
-                  color: "textPrimary.main",
+                  minWidth: "fit-content",
                 }}
+              >
+                <SettingsApplicationsRoundedIcon
+                  fontSize="small"
+                  sx={{
+                    color: "textPrimary.main",
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography={true}
+                sx={{ fontSize: "11px", minWidth: "fit-content" }}
+                primary={t("new_setting")}
               />
-            </ListItemIcon>
-            <ListItemText
-              disableTypography={true}
-              sx={{ fontSize: "11px", minWidth: "fit-content" }}
-              primary="عمومی"
-            />
-          </ListItemButton>
-          <ListItemButton sx={{ gap: 0.5, alignItems: "center" }}>
-            <ListItemIcon
-              sx={{
-                minWidth: "fit-content",
-                alignSelf: "flex-start",
-              }}
-            >
-              <CampaignRoundedIcon
-                fontSize="small"
+            </ListItemButton>
+          </Link>
+          <Link to={"/settings"}>
+            <ListItemButton sx={{ gap: 0.5 }}>
+              <ListItemIcon
                 sx={{
-                  color: "textPrimary.main",
+                  minWidth: "fit-content",
                 }}
+              >
+                <SettingsApplicationsRoundedIcon
+                  fontSize="small"
+                  sx={{
+                    color: "textPrimary.main",
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography={true}
+                sx={{ fontSize: "11px", minWidth: "fit-content" }}
+                primary={t("settings")}
               />
-            </ListItemIcon>
-            <ListItemText
-              disableTypography={true}
-              sx={{ fontSize: "11px", minWidth: "fit-content" }}
-              primary="اطلاع رسانی"
-            />
-          </ListItemButton>
+            </ListItemButton>
+          </Link>
         </List>
       </Collapse>
     </List>

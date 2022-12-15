@@ -7,6 +7,7 @@ interface UploadBoxProps {
   height: string | number;
   fontSize?: string | number;
   handler?: (file: File) => void;
+  error?: boolean;
 }
 
 export default function UploadBox({
@@ -15,10 +16,16 @@ export default function UploadBox({
   height,
   fontSize = 16,
   handler = (file: File) => null,
+  error = false,
 }: UploadBoxProps) {
   //
 
   const [previewImg, setPreviewImg] = React.useState<string | null>(null);
+  const [errors, setErrors] = React.useState<boolean>(error);
+
+  React.useEffect(() => {
+    setErrors(error);
+  }, [error]);
 
   const handlePreviewImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -32,6 +39,7 @@ export default function UploadBox({
       // URL.revokeObjectURL(previewImg as string);
       handler(file);
       reader.readAsDataURL(file);
+      setErrors(false);
     }
   };
 
@@ -47,10 +55,14 @@ export default function UploadBox({
         height: height,
         borderStyle: "dashed",
         borderWidth: 2.5,
-        borderColor: (theme: Theme) =>
-          theme.palette.mode === "dark"
-            ? theme.palette.textSecondary.main
-            : theme.palette.dividerBg.main,
+        borderColor: (theme: Theme) => {
+          if (!errors) {
+            return theme.palette.mode === "dark"
+              ? theme.palette.textSecondary.main
+              : theme.palette.dividerBg.main;
+          }
+          return "red";
+        },
         wordBreak: "break-all",
       }}
     >
