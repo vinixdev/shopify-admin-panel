@@ -37,18 +37,27 @@ export default function DashboardCard(props: PropsInterface) {
   return (
     <Box
       component={"div"}
-      width={200}
-      height={100}
       display={"flex"}
       alignItems={"center"}
       gap={1}
-      sx={{
-        backgroundColor: color,
-        borderRadius: 5,
-        boxShadow: 3,
-        color: "textPrimary.main",
-        padding: 0.5,
-      }}
+      sx={[
+        {
+          width: (theme: Theme) => theme.spacing(20),
+          height: (theme: Theme) => theme.spacing(10),
+          backgroundColor: color,
+          borderRadius: 5,
+          boxShadow: 3,
+          color: "textPrimary.main",
+          padding: 0.5,
+        },
+        (theme: Theme) => ({
+          [theme.breakpoints.down("md")]: {
+            width: (theme: Theme) => theme.spacing(15),
+            height: (theme: Theme) => theme.spacing(10),
+            fontSize: (theme: Theme) => theme.spacing(1.2),
+          },
+        }),
+      ]}
     >
       {props.icon}
       <Stack direction={"column"} alignItems={"center"} spacing={0.5}>

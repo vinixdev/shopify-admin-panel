@@ -9,10 +9,36 @@ interface PropsInterface {
 export default function DashboardCardContent(props: PropsInterface) {
   return (
     <>
-      <Typography fontSize={18} fontWeight={600} variant="h4">
+      <Typography
+        sx={[
+          {
+            fontSize: 18,
+          },
+          (theme) => ({
+            [theme.breakpoints.down("md")]: {
+              fontSize: theme.spacing(1.6),
+            },
+          }),
+        ]}
+        fontWeight={600}
+        variant="h4"
+      >
         {props.title}
       </Typography>
-      <Typography fontSize={16} fontWeight={600} variant="h5">
+      <Typography
+        sx={[
+          {
+            fontSize: 16,
+          },
+          (theme) => ({
+            [theme.breakpoints.down("md")]: {
+              fontSize: theme.spacing(1.4),
+            },
+          }),
+        ]}
+        fontWeight={600}
+        variant="h5"
+      >
         {props.text}
       </Typography>
     </>

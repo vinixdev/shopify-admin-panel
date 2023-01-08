@@ -13,6 +13,7 @@ import {
   CategoryContextInterface,
 } from "./context/CategoryContext";
 import { useTranslation } from "react-i18next";
+import { AttributeInterface } from "./context/CategoryReducer";
 
 export interface AttributeProps {
   groupPk: string;
@@ -21,6 +22,8 @@ export interface AttributeProps {
 
 export default function Attribute({ groupPk, id }: AttributeProps) {
   const { t } = useTranslation();
+  const { state, dispatch } =
+    React.useContext<CategoryContextInterface>(CategoryContext);
 
   const [formErrors, setFormErrors] = React.useState<Map<string, boolean>>(
     new Map<string, boolean>()
@@ -32,8 +35,16 @@ export default function Attribute({ groupPk, id }: AttributeProps) {
   const [filterableValue, setFilterableValue] = React.useState<boolean>(false);
   const [hasPriceValue, setHasPriceValue] = React.useState<boolean>(false);
 
-  const { dispatch } =
-    React.useContext<CategoryContextInterface>(CategoryContext);
+  // const [attr, setAttr] = React.useState<AttributeInterface | null>(null);
+
+  React.useEffect(() => {
+    const group = state.groups.find((group) => group.id === groupPk);
+    const attribute = group?.attributes.find((att) => att.id === id);
+    setTitleValue(attribute?.title || "");
+    setSlugValue(attribute?.slug || "");
+    setFilterableValue(attribute?.filterable || false);
+    setHasPriceValue(attribute?.hasPrice || false);
+  }, []);
 
   function removeAttribute(e: React.MouseEvent): void {
     e.preventDefault();
@@ -143,7 +154,7 @@ export default function Attribute({ groupPk, id }: AttributeProps) {
             size="small"
           />
         }
-        label={t("filterable")}
+        label={t("filterabel")}
       />
       <FormControlLabel
         sx={{

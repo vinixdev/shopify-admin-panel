@@ -31,7 +31,7 @@ export default function AllPayments() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<PaymentResponseInterface>(
-        `api/v1/payments?page=${page}&perPage=${perPage}`
+        `api/v1/admin/payments?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setPayments(res.data.payments);

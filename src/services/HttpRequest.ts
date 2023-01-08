@@ -39,4 +39,11 @@ export default class HttpRequest {
   ): Promise<R> {
     return this.instance.put(`${this.baseUrl}/${endpoint}`, data, config);
   }
+
+  public delete<T, R = AxiosResponse<T>>(
+    endpoint: string,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.instance.delete(`${this.baseUrl}/${endpoint}`, config);
+  }
 }

@@ -61,15 +61,15 @@ export default function AddSetting() {
   const http = new HttpRequest();
 
   useEffect(() => {
-    http.get<UserInterface[]>("api/v1/users/all").then((res) => {
+    http.get<UserInterface[]>("api/v1/admin/users/all").then((res) => {
       setUsers(res.data);
     });
 
-    http.get<ProductInterface[]>("api/v1/products/all").then((res) => {
+    http.get<ProductInterface[]>("api/v1/admin/products/all").then((res) => {
       setProducts(res.data);
     });
 
-    http.get<CategoryInterface[]>("api/v1/categories/all").then((res) => {
+    http.get<CategoryInterface[]>("api/v1/admin/categories/all").then((res) => {
       setCategories(res.data);
     });
   }, []);
@@ -131,7 +131,7 @@ export default function AddSetting() {
     }
 
     http
-      .post("api/v1/coupons", {
+      .post("api/v1/admin/coupons", {
         code,
         amount,
         limit: limit || 0,

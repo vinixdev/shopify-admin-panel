@@ -27,7 +27,7 @@ export default function AttributeGroup({ title, id }: AttributeGroupProps) {
   const { state, dispatch } =
     React.useContext<CategoryContextInterface>(CategoryContext);
 
-  React.useEffect(() => {}, [state]);
+  // React.useEffect(() => {}, [state]);
 
   const attributes = state.groups.length
     ? state.groups

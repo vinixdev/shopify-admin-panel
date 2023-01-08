@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router-dom";
 import AllCategoriesContent from "../category/AllCategoriesContent";
-import EditCategoryContent from "../category/EditCategoryContent";
+import AddCategoryContent from "../category/AddCategoryContent";
 import AllCustomers from "../customers/AllCustomers";
 import AllComments from "../feedbacks/AllComments";
 import AddNewCoupon from "../financial/AddNewCoupon";
@@ -25,10 +25,18 @@ export default function MainContent() {
       <Routes>
         <Route path="/" element={<RootContent />} />
         <Route path="/products" element={<AllProducts />} />
-        <Route path="/products/edit" element={<EditProductContent />} />
+        <Route path="/products/add" element={<EditProductContent />} />
+        <Route
+          path="/products/edit/:productID"
+          element={<EditProductContent />}
+        />
         <Route path="/orders" element={<AllOrders />} />
         <Route path="/orders/:orderID" element={<OrderDetail />} />
-        <Route path="/category/edit" element={<EditCategoryContent />}></Route>
+        <Route path="/category/add" element={<AddCategoryContent />}></Route>
+        <Route
+          path="/category/edit/:categoryID"
+          element={<AddCategoryContent />}
+        ></Route>
         <Route path="/categories" element={<AllCategoriesContent />}></Route>
         <Route path="/payments" element={<AllPayments />}></Route>
         <Route path="/coupons" element={<AllCoupons />}></Route>

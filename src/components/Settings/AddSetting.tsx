@@ -70,7 +70,7 @@ export default function AddSetting() {
     }
     const http = new HttpRequest();
     http
-      .post("api/v1/settings", {
+      .post("api/v1/admin/settings", {
         key,
         value,
         version,

@@ -136,7 +136,7 @@ export default function AllOrders() {
     const httpRequet = new HttpRequest();
     httpRequet
       .get<OrdersResponseInterface>(
-        `api/v1/orders?page=${page}&perPage=${perPage}&search=${search}`
+        `api/v1/admin/orders?page=${page}&perPage=${perPage}&search=${search}`
       )
       .then((res) => {
         setOrders(res.data.orders);

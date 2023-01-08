@@ -29,7 +29,7 @@ export default function AllCustomers() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<CustomerResponseInterface>(
-        `api/v1/users?page=${page}&perPage=${perPage}`
+        `api/v1/admin/users?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setUsers(res.data.users);

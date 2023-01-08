@@ -23,7 +23,18 @@ export default function Dashboard() {
       >
         {t("dashboard")}
       </Typography>
-      <Stack sx={{ width: "fit-content" }} direction={"row"}>
+      <Stack
+        sx={[
+          { width: "fit-content" },
+          (theme) => ({
+            [theme.breakpoints.down("md")]: {
+              flexWrap: "wrap",
+              gap: 2,
+            },
+          }),
+        ]}
+        direction={"row"}
+      >
         <DashboardCards />
         <DashboardChart />
       </Stack>

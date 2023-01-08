@@ -9,10 +9,10 @@ export interface AttributeInterface {
 }
 
 export interface AttributeGroupInterface {
+  id: string;
   title: string;
   slug: string;
   attributes: AttributeInterface[];
-  id: string;
 }
 
 export interface CategoryStateInterface {
@@ -127,6 +127,8 @@ export const categoryReducer = function (
         slug: "",
         groups: [],
       };
+    case "SET_CATEGORY":
+      return action.payload;
     default:
       return state;
   }

@@ -40,12 +40,17 @@ export default function AllProducts() {
   const [page, setPage] = React.useState<number>(1);
   const [numOfPages, setNumOfPages] = React.useState<number>(0);
   const [perPage, setPerPage] = React.useState<number>(5);
+  const [search, setSearch] = React.useState<string>("");
+
+  const handleOnChangeFilterInput = (value: string) => {
+    setSearch(value);
+  };
 
   React.useEffect(() => {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<ProductsResponseInterface>(
-        `api/v1/products?page=${page}&perPage=${perPage}`
+        `api/v1/admin/products?page=${page}&perPage=${perPage}&search=${search}`
       )
       .then((res) => {
         setProducts(res.data.products);
@@ -53,7 +58,18 @@ export default function AllProducts() {
         setNumOfPages(Math.ceil(res.data.totalProducts / perPage));
         setIsLoading(false);
       });
-  }, [page]);
+  }, [page, search]);
+
+  const handleDeleteProduct = (productID: string) => {
+    const httpRequest = new HttpRequest();
+    httpRequest.delete(`api/v1/admin/products/${productID}`).then((res) => {
+      setProducts((prev) => prev.filter((product) => product.id !== productID));
+      alertDispatch({
+        type: "ALERT_SUCCESS",
+        payload: t("success_msg"),
+      });
+    });
+  };
 
   const headers = [
     t("pic"),
@@ -132,14 +148,13 @@ export default function AllProducts() {
               <Status status={product.status} />
             </TableCell>
             <TableCell align="center">
-              <Link to={"/products/edit"}>
+              <Link to={`/products/edit/${product.id}`}>
                 <IconButton>
                   <BorderColorRoundedIcon fontSize="small" />
                 </IconButton>
               </Link>
 
-              <IconButton>
-                {/* handle click on this icon and send delete http method to server and delete this product. */}
+              <IconButton onClick={() => handleDeleteProduct(product.id)}>
                 <DeleteSweepRoundedIcon fontSize="small" />
               </IconButton>
             </TableCell>
@@ -161,6 +176,8 @@ export default function AllProducts() {
       page={page}
       setPage={setPage}
       numOfPages={numOfPages}
+      filter
+      handler={handleOnChangeFilterInput}
     />
   );
 }

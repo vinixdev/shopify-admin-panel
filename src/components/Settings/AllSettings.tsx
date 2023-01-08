@@ -29,7 +29,7 @@ export default function AllSettings() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<SettingResponseInterface>(
-        `api/v1/settings?page=${page}&perPage=${perPage}`
+        `api/v1/admin/settings?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setSettings(res.data.settings);

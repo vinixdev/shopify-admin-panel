@@ -20,7 +20,7 @@
   "new_product": "محصول جدید",
   "products": "لیست محصولات",
   "categories": "دسته بندی ها",
-  "new_category": "دسته بندی جدید",
+  "new_category": "اضافه / ویرایش دسته بندی",
   "offers": "پیشنهاد های ویژه",
   "order_menu": "مدیریت سفارش ها",
   "orders": "لیست سفارش ها",
@@ -133,5 +133,10 @@
   "absent": "غایب",
   "picked_up": "در حال ارسال",
   "selected_time": "زمان انتخاب شده",
-  "delivered_time": "تحویل داده شده در"
+  "delivered_time": "تحویل داده شده در",
+  "month1": "مهر",
+  "month2": "آبان",
+  "month3": "آذر",
+  "month4": "دی",
+  "month5": "بهمن"
 }

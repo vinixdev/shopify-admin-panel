@@ -32,7 +32,7 @@ export default function AllCoupons() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<CouponResponseInterface>(
-        `api/v1/coupons?page=${page}&perPage=${perPage}`
+        `api/v1/admin/coupons?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setCoupons(res.data.coupons);

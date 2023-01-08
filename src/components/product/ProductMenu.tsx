@@ -48,7 +48,7 @@ export default function ProductMenu() {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Link to={"/products/edit"}>
+          <Link to={"/products/add"}>
             <ListItemButton sx={{ gap: 0.5 }}>
               <ListItemIcon
                 sx={{
@@ -111,7 +111,7 @@ export default function ProductMenu() {
               />
             </ListItemButton>
           </Link>
-          <Link to="/category/edit">
+          <Link to="/category/add">
             <ListItemButton sx={{ gap: 0.5 }}>
               <ListItemIcon
                 sx={{

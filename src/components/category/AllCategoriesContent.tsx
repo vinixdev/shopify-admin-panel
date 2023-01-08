@@ -34,7 +34,7 @@ export default function AllCategoriesContent() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<CategoriesResponseInterface>(
-        `api/v1/categories?page=${page}&perPage=${perPage}`
+        `api/v1/admin/categories?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setCategories(res.data.categories);
@@ -54,6 +54,21 @@ export default function AllCategoriesContent() {
 
   const headers = [t("title"), t("slug"), t("operations")];
 
+  const handleDeleteCategory = (categoryID: string) => {
+    const httpRequest = new HttpRequest();
+    httpRequest.delete(`api/v1/admin/categories/${categoryID}`).then((res) => {
+      setCategories((prev) =>
+        prev.filter((category) => category.id !== categoryID)
+      );
+      console.log(res.data);
+
+      alertDispatch({
+        type: "ALERT_SUCCESS",
+        payload: t("success_msg"),
+      });
+    });
+  };
+
   const categoriesCell = categories.length
     ? categories.map((category) => {
         return (
@@ -61,14 +76,13 @@ export default function AllCategoriesContent() {
             <TableCell align="center">{category.title}</TableCell>
             <TableCell align="center">{category.slug}</TableCell>
             <TableCell align="center">
-              <Link to={"/category/edit"}>
+              <Link to={`/category/edit/${category.id}`}>
                 <IconButton>
                   <BorderColorRoundedIcon />
                 </IconButton>
               </Link>
 
-              <IconButton>
-                {/* handle click on this icon and send delete http method to server and delete this category. */}
+              <IconButton onClick={() => handleDeleteCategory(category.id)}>
                 <DeleteSweepRoundedIcon />
               </IconButton>
             </TableCell>

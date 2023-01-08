@@ -27,7 +27,9 @@ export default function AllShipments() {
   React.useEffect(() => {
     const httpRequest = new HttpRequest();
     httpRequest
-      .get<ShipmentResponse>(`api/v1/shipments?page=${page}&perPage=${perPage}`)
+      .get<ShipmentResponse>(
+        `api/v1/admin/shipments?page=${page}&perPage=${perPage}`
+      )
       .then((res) => {
         setShipments(res.data.shipments);
         setPerPage(res.data.perPage);

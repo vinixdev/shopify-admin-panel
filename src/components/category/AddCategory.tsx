@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, FormControl } from "@mui/material";
 import axios from "axios";
 
@@ -15,6 +15,8 @@ import HttpRequest from "../../services/HttpRequest";
 import { alertInitialState, alertReducer } from "../alert/reducer/alertReducer";
 import Alert from "../alert/Alert";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { CategoryStateInterface } from "./context/CategoryReducer";
 
 export default function AddNewCategory() {
   const { t } = useTranslation();
@@ -33,13 +35,47 @@ export default function AddNewCategory() {
 
   const [slug, setSlug] = React.useState<string>("");
 
-  const [categoryTitle, setCategoryTitle] = React.useState<string>("");
+  const [categoryTitle, setCategoryTitle] = React.useState<string>();
 
-  const [categorySlug, setCategorySlug] = React.useState<string>("");
+  const [categorySlug, setCategorySlug] = React.useState<string>();
 
   const [formErrors, setFormErrors] = React.useState<Map<string, string>>(
     new Map<string, string>()
   );
+
+  const [error, setError] = React.useState<string>("");
+
+  const { categoryID } = useParams();
+  // const [category, setCategory] = React.useState<CategoryStateInterface | null>(
+  //   null
+  // );
+  useEffect(() => {
+    if (categoryID) {
+      const http = new HttpRequest();
+      http
+        .get<CategoryStateInterface>(`api/v1/categories/${categoryID}`)
+        .then((res) => {
+          dispatch({
+            type: "SET_CATEGORY",
+            payload: res.data,
+          });
+          setCategoryTitle(res.data.title);
+          setCategorySlug(res.data.slug);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setError("دسته بندی موردنظر پیدا نشد!");
+        });
+    } else {
+      dispatch({
+        type: "RESET_STATE",
+        payload: null,
+      });
+      setCategoryTitle("");
+      setCategorySlug("");
+      setError("");
+    }
+  }, [categoryID]);
 
   const attrGroups = state.groups.length ? (
     state.groups.map((group, i) => {
@@ -153,33 +189,50 @@ export default function AddNewCategory() {
     }
 
     const httpRequest = new HttpRequest();
-    httpRequest
-      .post("api/v1/categories", state, {})
-      .then((res) => {
-        // show notification with component and clear fields
-        dispatch({
-          type: "RESET_STATE",
-          payload: null,
-        });
-        alertDispatch({
-          type: "ALERT_SUCCESS",
-          payload: t("success_msg"),
-        });
-        setCategorySlug("");
-        setCategoryTitle("");
-        setTitle("");
-        setSlug("");
-      })
-      .catch((err: Error) => {
-        if (axios.isAxiosError(err)) {
+    if (categoryID) {
+      httpRequest
+        .patch(`api/v1/categories/${categoryID}`, state)
+        .then((res) => {
           alertDispatch({
-            type: "ALERT_ERROR",
-            payload: t("default_error"),
+            type: "ALERT_SUCCESS",
+            payload: t("success_msg"),
           });
-          console.log(err.message);
-        }
-      });
-    console.log(state);
+        })
+        .catch((err: Error) => {
+          if (axios.isAxiosError(err)) {
+            alertDispatch({
+              type: "ALERT_ERROR",
+              payload: t("default_error"),
+            });
+          }
+        });
+    } else {
+      httpRequest
+        .post("api/v1/admin/categories", state, {})
+        .then((res) => {
+          // show notification with component and clear fields
+          dispatch({
+            type: "RESET_STATE",
+            payload: null,
+          });
+          alertDispatch({
+            type: "ALERT_SUCCESS",
+            payload: t("success_msg"),
+          });
+          setCategorySlug("");
+          setCategoryTitle("");
+          setTitle("");
+          setSlug("");
+        })
+        .catch((err: Error) => {
+          if (axios.isAxiosError(err)) {
+            alertDispatch({
+              type: "ALERT_ERROR",
+              payload: t("default_error"),
+            });
+          }
+        });
+    }
   }
 
   function showModal(e: React.MouseEvent) {
@@ -241,67 +294,71 @@ export default function AddNewCategory() {
 
   return (
     <PaperBox title={t("new_category")}>
-      <Box
-        paddingX={1}
-        paddingY={2}
-        component={"form"}
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        gap={2}
-      >
+      {error ? (
+        <p>{error}</p>
+      ) : (
         <Box
-          width={"100%"}
-          component={"div"}
+          paddingX={1}
+          paddingY={2}
+          component={"form"}
           display={"flex"}
+          flexDirection={"column"}
           alignItems={"center"}
           gap={2}
         >
-          <FormControl>
-            <InputField
-              value={categoryTitle}
-              placeholder={t("title")}
-              required
-              error={formErrors.has("category_title")}
-              onChangeHandler={handleCategoryTitle}
-              onBlurHandler={handleCategoryTitleBlur}
-            />
-          </FormControl>
-          <FormControl>
-            <InputField
-              value={categorySlug}
-              required
-              onChangeHandler={handleCategorySlug}
-              onBlurHandler={handleCategorySlugBlur}
-              error={formErrors.has("category_slug")}
-              placeholder={t("slug")}
-            />
-          </FormControl>
-          <Box flexShrink={"0"}>
-            <AddButton onClickHandler={showModal} text={t("add_new_group")} />
-          </Box>
-        </Box>
-
-        <>{attrGroups}</>
-        <FormControl sx={{ alignSelf: "flex-end" }}>
-          <Button
-            onClick={handleSaveBtn}
-            type="submit"
-            disabled={formErrors.size > 0}
-            sx={{
-              alignSelf: "flex-end",
-              backgroundColor: "primary.main",
-              color: "textPrimary.main",
-              "&:hover": {
-                backgroundColor: "#4931BE",
-              },
-              marginTop: 0.5,
-            }}
+          <Box
+            width={"100%"}
+            component={"div"}
+            display={"flex"}
+            alignItems={"center"}
+            gap={2}
           >
-            {t("save")}
-          </Button>
-        </FormControl>
-      </Box>
+            <FormControl>
+              <InputField
+                value={categoryTitle}
+                placeholder={t("title")}
+                required
+                error={formErrors.has("category_title")}
+                onChangeHandler={handleCategoryTitle}
+                onBlurHandler={handleCategoryTitleBlur}
+              />
+            </FormControl>
+            <FormControl>
+              <InputField
+                value={categorySlug}
+                required
+                onChangeHandler={handleCategorySlug}
+                onBlurHandler={handleCategorySlugBlur}
+                error={formErrors.has("category_slug")}
+                placeholder={t("slug")}
+              />
+            </FormControl>
+            <Box flexShrink={"0"}>
+              <AddButton onClickHandler={showModal} text={t("add_new_group")} />
+            </Box>
+          </Box>
+
+          <>{attrGroups}</>
+          <FormControl sx={{ alignSelf: "flex-end" }}>
+            <Button
+              onClick={handleSaveBtn}
+              type="submit"
+              disabled={formErrors.size > 0}
+              sx={{
+                alignSelf: "flex-end",
+                backgroundColor: "primary.main",
+                color: "textPrimary.main",
+                "&:hover": {
+                  backgroundColor: "#4931BE",
+                },
+                marginTop: 0.5,
+              }}
+            >
+              {t("save")}
+            </Button>
+          </FormControl>
+        </Box>
+      )}
 
       <ModalForm
         title={t("add_new_group")}

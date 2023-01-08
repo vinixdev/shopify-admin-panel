@@ -1,6 +1,12 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { CategoriesInterface, ProductCategory } from "../interfaces/interfaces";
+import { AttributeGroupInterface } from "../../category/context/CategoryReducer";
+import {
+  CategoriesInterface,
+  ProductCategory,
+  ProductCategoryAtteribute,
+  ProductCategoryAtteributeGroup,
+} from "../interfaces/interfaces";
 
 export interface VariantItemInterface {
   hash: string;
@@ -31,10 +37,18 @@ export interface VariantPriceInterface {
 // {id:string, variants:[{variant: id, item: item-id}], price: 2000, inventory: 5}
 
 export interface EditProductStateInterface {
+  title?: string;
+  price?: string;
+  specialPrice?: string;
+  stock?: string;
+  category?: CategoriesInterface;
   categories: CategoriesInterface[];
   selectedCategory: ProductCategory | null;
-  thumbnail: File | null;
-  gallery: File[];
+  thumbnail: File | null | string;
+  itemOne: File | null | string;
+  itemTwo: File | null | string;
+  itemThree: File | null | string;
+  itemFour: File | null | string;
   variants: VariantInterface[];
   variantsPrice: VariantPriceInterface[];
 }
@@ -43,7 +57,10 @@ export const initialState: EditProductStateInterface = {
   categories: [],
   selectedCategory: null,
   thumbnail: null,
-  gallery: [],
+  itemOne: null,
+  itemTwo: null,
+  itemThree: null,
+  itemFour: null,
   variants: [],
   variantsPrice: [],
 };
@@ -73,10 +90,25 @@ export const editProductReducer = (
         ...state,
         thumbnail: action.payload,
       };
-    case "ADD_ITEM_TO_GALLERY":
+    case "ADD_GALLERY_1":
       return {
         ...state,
-        gallery: [...state.gallery, action.payload],
+        itemOne: action.payload,
+      };
+    case "ADD_GALLERY_2":
+      return {
+        ...state,
+        itemTwo: action.payload,
+      };
+    case "ADD_GALLERY_3":
+      return {
+        ...state,
+        itemThree: action.payload,
+      };
+    case "ADD_GALLERY_4":
+      return {
+        ...state,
+        itemFour: action.payload,
       };
     case "UPDATE_ATTRIBUTE_VALUE":
       if (state.selectedCategory) {
@@ -149,8 +181,33 @@ export const editProductReducer = (
           },
         ],
       };
+    case "SET_PRODUCT":
+      return {
+        ...action.payload,
+        categories: [],
+        selectedCategory: {
+          ...action.payload.category,
+          groups: action.payload.attributes,
+        },
+        thumbnail: action.payload.thumbnailUrl,
+        itemOne: action.payload.galleryUrls[0] || null,
+        itemTwo: action.payload.galleryUrls[1] || null,
+        itemThree: action.payload.galleryUrls[2] || null,
+        itemFour: action.payload.galleryUrls[3] || null,
+      };
+    case "RESET_STATE":
+      return {
+        categories: [...state.categories],
+        selectedCategory: null,
+        thumbnail: null,
+        itemOne: null,
+        itemTwo: null,
+        itemThree: null,
+        itemFour: null,
+        variants: [],
+        variantsPrice: [],
+      };
     default:
       return state;
   }
-  return state;
 };

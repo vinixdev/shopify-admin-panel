@@ -47,3 +47,9 @@ export interface ProductsResponseInterface {
   perPage: number;
   totalProducts: number;
 }
+
+export interface CategoriesResponse {
+  categories: CategoriesInterface[];
+  totalCategories: number;
+  perPage: number;
+}

@@ -20,7 +20,7 @@
   "new_product": "New Product",
   "products": "All Products",
   "categories": "All Categories",
-  "new_category": "New Category",
+  "new_category": "New / Edit Category",
   "offers": "Offers",
   "order_menu": "Order Management",
   "orders": "All Orders",
@@ -133,5 +133,10 @@
   "absent": "Absent",
   "picked_up": "Picked Up",
   "selected_time": "Selected Time",
-  "delivered_time": "Delivered At"
+  "delivered_time": "Delivered At",
+  "month1": "Mehr",
+  "month2": "Aban",
+  "month3": "Azar",
+  "month4": "Dey",
+  "month5": "Bahman"
 }

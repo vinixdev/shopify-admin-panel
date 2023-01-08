@@ -8,6 +8,7 @@ interface UploadBoxProps {
   fontSize?: string | number;
   handler?: (file: File) => void;
   error?: boolean;
+  url?: string | null;
 }
 
 export default function UploadBox({
@@ -17,15 +18,20 @@ export default function UploadBox({
   fontSize = 16,
   handler = (file: File) => null,
   error = false,
+  url = null,
 }: UploadBoxProps) {
   //
 
-  const [previewImg, setPreviewImg] = React.useState<string | null>(null);
+  const [previewImg, setPreviewImg] = React.useState<string | null>(url);
   const [errors, setErrors] = React.useState<boolean>(error);
 
   React.useEffect(() => {
     setErrors(error);
   }, [error]);
+
+  React.useEffect(() => {
+    setPreviewImg(url);
+  }, [url]);
 
   const handlePreviewImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -88,7 +94,7 @@ export default function UploadBox({
       {previewImg ? (
         <Box
           component={"img"}
-          src={previewImg}
+          src={previewImg === null ? "" : previewImg}
           sx={{
             position: "absolute",
             width: "100%",

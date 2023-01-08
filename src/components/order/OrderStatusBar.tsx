@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, Typography, Slider, Theme } from "@mui/material";
 
 function valuetext(value: number): string {
@@ -15,6 +15,15 @@ interface OrderStatusBarProps {
 }
 
 export default function OrderStatusBar(props: OrderStatusBarProps) {
+  //
+  const [value, setValue] = useState<number>(props.value);
+  const [maxValue, setMaxValue] = useState<number>(props.max);
+
+  useEffect(() => {
+    setValue(props.value);
+    setMaxValue(props.max);
+  }, [props.value, props.max]);
+
   return (
     <Stack direction={"row"} alignItems={"center"}>
       <Typography
@@ -27,9 +36,9 @@ export default function OrderStatusBar(props: OrderStatusBarProps) {
       </Typography>
       <Slider
         aria-label={props.enTitle}
-        defaultValue={props.value}
+        value={value}
+        max={maxValue}
         min={props.min}
-        max={props.max}
         getAriaValueText={valuetext}
         valueLabelDisplay="on"
         step={props.step}

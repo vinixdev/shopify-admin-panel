@@ -31,7 +31,7 @@ export default function AllComments() {
     const httpRequest = new HttpRequest();
     httpRequest
       .get<CommentInterfaceResponse>(
-        `api/v1/comments?page=${page}&perPage=${perPage}`
+        `api/v1/admin/comments?page=${page}&perPage=${perPage}`
       )
       .then((res) => {
         setComments(res.data.comments);
@@ -101,7 +101,7 @@ export default function AllComments() {
       alertState={alertState}
       alertDispatch={alertDispatch}
       rows={5}
-      cells={5}
+      cells={8}
       title={t("comments")}
       page={page}
       setPage={setPage}
