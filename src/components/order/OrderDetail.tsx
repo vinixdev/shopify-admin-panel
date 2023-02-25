@@ -40,7 +40,7 @@ export default function OrderDetail() {
   useEffect(() => {
     const http = new HttpRequest();
     http
-      .get<AllOrderInterface>(`api/v1/orders/${orderID}`)
+      .get<AllOrderInterface>(`api/v1/admin/orders/${orderID}`)
       .then((res) => {
         setOrder(res.data);
         setStatus(res.data.status);
@@ -57,7 +57,7 @@ export default function OrderDetail() {
   const handleSubmitChangeOrderStatus = (e: React.MouseEvent) => {
     const http = new HttpRequest();
     http
-      .patch(`api/v1/orders/${orderID}`, {
+      .patch(`api/v1/admin/orders/${orderID}`, {
         status,
       })
       .then((res) => {

@@ -26,7 +26,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("sent")}
         enTitle={"Sended Orders"}
       />
@@ -37,7 +37,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("delivered")}
         enTitle={"deliverd Orders"}
       />
@@ -47,7 +47,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("paid")}
         enTitle={"Paid Orders"}
       />
@@ -57,7 +57,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("refunded")}
         enTitle={"Funded Orders"}
       />
@@ -67,7 +67,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("cancelled")}
         enTitle={"Cancelled Orders"}
       />
@@ -78,7 +78,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("confirmed")}
         enTitle={"Confirmed Orders"}
       />
@@ -88,7 +88,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("init")}
         enTitle={"Init Orders"}
       />
@@ -99,7 +99,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("inventory")}
         enTitle={"Inventory Orders"}
       />
@@ -109,7 +109,7 @@ export default function OrderStatusBarContainer() {
         }
         min={0}
         max={orders.length}
-        step={50}
+        step={5}
         title={t("ready")}
         enTitle={"Ready Orders"}
       />

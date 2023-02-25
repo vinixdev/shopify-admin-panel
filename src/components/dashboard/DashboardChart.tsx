@@ -9,21 +9,40 @@ import {
 import { ValueScale, Animation } from "@devexpress/dx-react-chart";
 import { useTranslation } from "react-i18next";
 import { ResponsiveBar } from "@nivo/bar";
+import Cookies from "js-cookie";
 
 export default function DashboardChart() {
   const { t } = useTranslation();
   const theme: Theme = useTheme();
+  const currentLanguageCode = Cookies.get("i18next") || "fa";
+  const format = new Intl.DateTimeFormat(currentLanguageCode, {
+    month: "long",
+  }).format;
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
   type dataType = {
     month: string;
     avgIncome: number;
     color?: string;
   };
   const data: dataType[] = [
-    { month: t("month1"), avgIncome: 25000 },
-    { month: t("month2"), avgIncome: 50000 },
-    { month: t("month3"), avgIncome: 100000 },
-    { month: t("month4"), avgIncome: 50000 },
-    { month: t("month5"), avgIncome: 60000 },
+    {
+      month: format(new Date(currentYear, currentMonth - 4)),
+      avgIncome: 25000,
+    },
+    {
+      month: format(new Date(currentYear, currentMonth - 3)),
+      avgIncome: 50000,
+    },
+    {
+      month: format(new Date(currentYear, currentMonth - 2)),
+      avgIncome: 100000,
+    },
+    {
+      month: format(new Date(currentYear, currentMonth - 1)),
+      avgIncome: 50000,
+    },
+    { month: format(new Date(currentYear, currentMonth)), avgIncome: 60000 },
     // { month: "اسفند", avgIncome: 60000 },
     // { month: "فروردین", avgIncome: 55000 },
     // { month: "اردیبهشت", avgIncome: 15000 },
