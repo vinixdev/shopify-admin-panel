@@ -68,5 +68,5 @@ Follow these instructions to get the admin panel running locally.
 ---
 ### 🔗 Related Repositories
 
-* **Backend**: [github.com/vinixdev/shopify_backend](https://github.com/vinixdev/shopify_backend)
-* **Frontend**: [github.com/vinixdev/shopify_frontend_next](https://github.com/vinixdev/shopify_frontend_next)
+* **Backend**: [Backend repo](https://github.com/vinixdev/shopify_backend)
+* **Frontend**: [Frontend repo](https://github.com/vinixdev/shopify_frontend_next)
