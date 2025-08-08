@@ -47,14 +47,8 @@ Follow these instructions to get the admin panel running locally.
     ```sh
     npm install
     ```
-
-3.  **Set up environment variables:**
-    Create a `.env` file in the root directory and point it to your backend API.
-    ```env
-    REACT_APP_API_URL=http://localhost:5000/api
-    ```
-
-4.  **Run the application:**
+    
+3.  **Run the application:**
     ```sh
     npm start
     ```
@@ -62,6 +56,18 @@ Follow these instructions to get the admin panel running locally.
 
 ---
 
+### 💻️ Screenshots and Demo
+
+-- **Dashboard page**:
+![Admin Dashboard](screenshots/admin-panel-00.jpg)
+-- **Proudct list**:
+![Product list](screenshots/admin-panel-01.jpg)
+-- **Demo 1**:
+![Demo 1](screenshots/admin-panel-02.mp4)
+-- **Demo 2**:
+![Demo 2](screenshots/admin-panel-03.mp4)
+
+---
 ### 🔗 Related Repositories
 
 * **Backend (Express.js)**: [github.com/vinixdev/shopify_backend](https://github.com/vinixdev/shopify_backend)
