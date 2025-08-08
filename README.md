@@ -2,7 +2,7 @@
 
 This is the admin dashboard for the Shopify Clone project, built with React. It provides a user-friendly interface for managing products, viewing orders, and overseeing store operations.
 
-*This admin panel communicates with [Backend Repo](https://github.com/vinixdev/shopify_backend).*
+*This admin panel communicates with [Backend](https://github.com/vinixdev/shopify_backend).*
 
 ---
 
@@ -68,5 +68,5 @@ Follow these instructions to get the admin panel running locally.
 ---
 ### 🔗 Related Repositories
 
-* **Backend (Express.js)**: [github.com/vinixdev/shopify_backend](https://github.com/vinixdev/shopify_backend)
-* **Frontend (Next.js)**: [github.com/vinixdev/shopify_frontend_next](https://github.com/vinixdev/shopify_frontend_next)
+* **Backend**: [github.com/vinixdev/shopify_backend](https://github.com/vinixdev/shopify_backend)
+* **Frontend**: [github.com/vinixdev/shopify_frontend_next](https://github.com/vinixdev/shopify_frontend_next)
