@@ -58,14 +58,14 @@ Follow these instructions to get the admin panel running locally.
 
 ### 💻️ Screenshots and Demo
 
--**Dashboard page**:
-![Admin Dashboard](screenshots/admin-panel-00.jpg)
--**Proudct list**:
-![Product list](screenshots/admin-panel-01.jpg)
--**Demo 1**:
-![Demo 1](screenshots/admin-panel-02.gif)
--**Demo 2**:
-![Demo 2](screenshots/admin-panel-03.gif)
+* **Dashboard page**:
+    ![Admin Dashboard](screenshots/admin-panel-00.jpg)
+* **Product list**:
+    ![Product list](screenshots/admin-panel-01.jpg)
+* **Demo 1**:
+    ![Demo 1](screenshots/admin-panel-02.gif)
+* **Demo 2**:
+    ![Demo 2](screenshots/admin-panel-03.gif)
 
 ---
 ### 🔗 Related Repositories
